@@ -53,3 +53,8 @@ The directory structure of the project looks like this:
 Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
 started with Machine Learning Operations (MLOps).
+
+# Introduction
+This repository is the Machine Learning Operations pipeline of our exam project in the course Machine Learning Operations 02476.
+Our project will focus on analyzing and predicting renewable energy prices from the dataset `intermittent-renewables-production-france.csv` by Henri Upton, the dataset can be found under `data/raw`
+
