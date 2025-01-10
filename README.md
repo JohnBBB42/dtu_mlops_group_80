@@ -1,4 +1,4 @@
-# renewable_energy_price_prediction
+# Renewable energy price prediction
 
 A mlops project pipeline for predicting electricity prices of renewable energy
 
