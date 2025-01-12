@@ -4,7 +4,7 @@ A mlops project pipeline for predicting electricity prices of renewable energy
 
 # Introduction
 This repository contains the Machine Learning Operations (MLOps) pipeline for our exam project in the course Machine Learning Operations (02476).
-The goal of our project is to analyze and predict renewable energy trends and energy price changes using machine learning. Our primary dataset is intermittent-renewables-production-france.csv` by Henri Upton. This dataset, located under the `data/raw` directory, contains data about energy production across different times of the year and day, primarily in France, over the last four years. While this dataset will initially be used for training and testing, we may explore additional datasets as the project evolves and the pipeline becomes more robust.
+The goal of our project is to analyze and predict renewable energy trends and energy price changes using machine learning. Our primary dataset is `intermittent-renewables-production-france.csv` by Henri Upton. This dataset, located under the `data/raw` directory, contains data about energy production across different times of the year and day, primarily in France, over the last four years. While this dataset will initially be used for training and testing, we may explore additional datasets as the project evolves and the pipeline becomes more robust.
 
 # Framework
 We plan to use PyTorch as the primary framework for building and training our machine learning models. Additionally, we may incorporate tools such as PyTorch Transformers (https://pytorch.org/docs/stable/generated/torch.nn.Transformer.html) for more advanced modeling. To manage the MLOps pipeline, we aim to use tools such as DVC (Data Version Control) and several other tools introduced in the course.
