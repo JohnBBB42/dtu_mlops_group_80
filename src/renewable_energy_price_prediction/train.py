@@ -12,7 +12,8 @@ from omegaconf import OmegaConf
 from sklearn.metrics import mean_squared_error, r2_score
 from model import get_linear_regression_model, NeuralNetwork
 from evaluate import evaluate_simple_model, evaluate_complex_model
-#save_model
+# Load and preprocess data
+from utils import load_data, split_data
 
 log = logging.getLogger(__name__)
 
@@ -23,11 +24,10 @@ def train(config) -> None:
     Train and evaluate models based on configuration.
     Supports both simple (linear regression) and complex (neural network) models.
     """
-    print(f"Configuration: \n{OmegaConf.to_yaml(config)}")
+    log.info(f"Configuration: \n{OmegaConf.to_yaml(config)}")
     hparams = config.experiment
 
-    # Load and preprocess data
-    from utils import load_data, split_data
+    
     X, y = load_data(hparams["dataset_path"])
     X_train, X_test, y_train, y_test = split_data(X, y, test_size=hparams["test_size"])
 
@@ -70,12 +70,14 @@ def train(config) -> None:
 
         log.info("Evaluating Complex Model...")
         evaluate_complex_model(model, X_test, y_test)
-        #save_model(model, "complex_model.pt")
     else:
         log.error("Invalid mode. Use 'simple' or 'complex'.")
         return
 
     log.info("Training complete!")
+
+    # save weights
+    torch.save(model, f"{os.getcwd()}/trained_model.pt")
 
 
 if __name__ == "__main__":
