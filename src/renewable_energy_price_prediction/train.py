@@ -1,44 +1,82 @@
+"""
+Train and evaluate models using Hydra configuration management.
+"""
+
+import logging
+import os
+import hydra
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
+from omegaconf import OmegaConf
 from sklearn.metrics import mean_squared_error, r2_score
 from model import get_linear_regression_model, NeuralNetwork
+from evaluate import evaluate_simple_model, evaluate_complex_model
+#save_model
+
+log = logging.getLogger(__name__)
 
 
-# Train Simple Model (Linear Regression)
-def train_simple_model(X_train, y_train):
-    model = get_linear_regression_model()
-    model.fit(X_train, y_train)
-    return model
+@hydra.main(version_base="1.1", config_path="../../configs", config_name="config.yaml")
+def train(config) -> None:
+    """
+    Train and evaluate models based on configuration.
+    Supports both simple (linear regression) and complex (neural network) models.
+    """
+    print(f"Configuration: \n{OmegaConf.to_yaml(config)}")
+    hparams = config.experiment
 
+    # Load and preprocess data
+    from utils import load_data, split_data
+    X, y = load_data(hparams["dataset_path"])
+    X_train, X_test, y_train, y_test = split_data(X, y, test_size=hparams["test_size"])
 
-# Train Complex Model (Neural Network)
-def train_complex_model(X_train, y_train, input_size, epochs=3, batch_size=4, learning_rate=0.001):
-    # Convert data to PyTorch tensors
-    X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-    y_train_tensor = torch.tensor(y_train, dtype=torch.float32).view(-1, 1)
+    if config.mode == "simple":
+        log.info("Training Simple Model (Linear Regression)...")
+        model = get_linear_regression_model()
+        model.fit(X_train, y_train)
+        log.info("Evaluating Simple Model...")
+        evaluate_simple_model(model, X_test, y_test)
+        #save_model(model, "simple_model.pkl")
+    elif config.mode == "complex":
+        log.info("Training Complex Model (Neural Network)...")
+        input_size = X_train.shape[1]
 
-    # Create DataLoader
-    train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        # Prepare data for PyTorch
+        train_dataset = TensorDataset(torch.tensor(X_train, dtype=torch.float32),
+                                      torch.tensor(y_train, dtype=torch.float32).view(-1, 1))
+        train_loader = DataLoader(train_dataset, batch_size=hparams["batch_size"], shuffle=True)
 
-    # Initialize the neural network
-    model = NeuralNetwork(input_size)
-    criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        model = NeuralNetwork(input_size)
+        criterion = nn.MSELoss()
+        optimizer = hydra.utils.instantiate(config.optimizer, params=model.parameters())
 
-    # Train the neural network
-    for epoch in range(epochs):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
+
+        # Training loop
         model.train()
-        for batch_X, batch_y in train_loader:
-            optimizer.zero_grad()
-            predictions = model(batch_X)
-            loss = criterion(predictions, batch_y)
-            loss.backward()
-            optimizer.step()
+        for epoch in range(hparams["n_epochs"]):
+            epoch_loss = 0
+            for batch_X, batch_y in train_loader:
+                batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+                optimizer.zero_grad()
+                predictions = model(batch_X)
+                loss = criterion(predictions, batch_y)
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item()
+            log.info(f"Epoch {epoch + 1}/{hparams['n_epochs']}, Loss: {epoch_loss:.4f}")
 
-        # Print loss for every 10 epochs
-        if (epoch + 1) % 10 == 0:
-            print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item():.4f}")
+        log.info("Evaluating Complex Model...")
+        evaluate_complex_model(model, X_test, y_test)
+        #save_model(model, "complex_model.pt")
+    else:
+        log.error("Invalid mode. Use 'simple' or 'complex'.")
+        return
 
-    return model
+    log.info("Training complete!")
+
+
+if __name__ == "__main__":
+    train()
