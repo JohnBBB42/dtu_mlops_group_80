@@ -32,4 +32,4 @@ line-length = 120
 omit = ["tests/*"]
 
 [project.scripts]
-preprocess_data = "src.renewable_energy_price_prediction.data:main"
+preprocess_data = "renewable_energy_price_prediction.data:main"
