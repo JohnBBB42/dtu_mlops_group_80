@@ -1,0 +1,6 @@
+hyperparameters:
+  test_size: 0.3
+  batch_size: 16
+  n_epochs: 4
+  lr: 0.001
+  seed: 42
