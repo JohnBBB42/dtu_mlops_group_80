@@ -16,68 +16,67 @@ from evaluate import evaluate_simple_model, evaluate_complex_model
 from utils import load_data, split_data
 
 log = logging.getLogger(__name__)
+with torch.profiler.profile(record_shapes=True, profile_memory=True) as prof:
+    @hydra.main(version_base="1.1", config_path="../../configs", config_name="config.yaml")
+    def train(config) -> None:
+        """
+        Train and evaluate models based on configuration.
+        Supports both simple (linear regression) and complex (neural network) models.
+        """
+        log.info(f"Configuration: \n{OmegaConf.to_yaml(config)}")
+        hparams = config.experiment
 
+        
+        X, y = load_data(hparams["dataset_path"])
+        X_train, X_test, y_train, y_test = split_data(X, y, test_size=hparams["test_size"])
 
-@hydra.main(version_base="1.1", config_path="../../configs", config_name="config.yaml")
-def train(config) -> None:
-    """
-    Train and evaluate models based on configuration.
-    Supports both simple (linear regression) and complex (neural network) models.
-    """
-    log.info(f"Configuration: \n{OmegaConf.to_yaml(config)}")
-    hparams = config.experiment
+        if config.mode == "simple":
+            log.info("Training Simple Model (Linear Regression)...")
+            model = get_linear_regression_model()
+            model.fit(X_train, y_train)
+            log.info("Evaluating Simple Model...")
+            evaluate_simple_model(model, X_test, y_test)
+            #save_model(model, "simple_model.pkl")
+        elif config.mode == "complex":
+            log.info("Training Complex Model (Neural Network)...")
+            input_size = X_train.shape[1]
 
-    
-    X, y = load_data(hparams["dataset_path"])
-    X_train, X_test, y_train, y_test = split_data(X, y, test_size=hparams["test_size"])
+            # Prepare data for PyTorch
+            train_dataset = TensorDataset(torch.tensor(X_train, dtype=torch.float32),
+                                        torch.tensor(y_train, dtype=torch.float32).view(-1, 1))
+            train_loader = DataLoader(train_dataset, batch_size=hparams["batch_size"], shuffle=True)
 
-    if config.mode == "simple":
-        log.info("Training Simple Model (Linear Regression)...")
-        model = get_linear_regression_model()
-        model.fit(X_train, y_train)
-        log.info("Evaluating Simple Model...")
-        evaluate_simple_model(model, X_test, y_test)
-        #save_model(model, "simple_model.pkl")
-    elif config.mode == "complex":
-        log.info("Training Complex Model (Neural Network)...")
-        input_size = X_train.shape[1]
+            model = NeuralNetwork(input_size)
+            criterion = nn.MSELoss()
+            optimizer = hydra.utils.instantiate(config.optimizer, params=model.parameters())
 
-        # Prepare data for PyTorch
-        train_dataset = TensorDataset(torch.tensor(X_train, dtype=torch.float32),
-                                      torch.tensor(y_train, dtype=torch.float32).view(-1, 1))
-        train_loader = DataLoader(train_dataset, batch_size=hparams["batch_size"], shuffle=True)
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model.to(device)
 
-        model = NeuralNetwork(input_size)
-        criterion = nn.MSELoss()
-        optimizer = hydra.utils.instantiate(config.optimizer, params=model.parameters())
+            # Training loop
+            model.train()
+            for epoch in range(hparams["n_epochs"]):
+                epoch_loss = 0
+                for batch_X, batch_y in train_loader:
+                    batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+                    optimizer.zero_grad()
+                    predictions = model(batch_X)
+                    loss = criterion(predictions, batch_y)
+                    loss.backward()
+                    optimizer.step()
+                    epoch_loss += loss.item()
+                log.info(f"Epoch {epoch + 1}/{hparams['n_epochs']}, Loss: {epoch_loss:.4f}")
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model.to(device)
+            log.info("Evaluating Complex Model...")
+            evaluate_complex_model(model, X_test, y_test)
+        else:
+            log.error("Invalid mode. Use 'simple' or 'complex'.")
+            return
 
-        # Training loop
-        model.train()
-        for epoch in range(hparams["n_epochs"]):
-            epoch_loss = 0
-            for batch_X, batch_y in train_loader:
-                batch_X, batch_y = batch_X.to(device), batch_y.to(device)
-                optimizer.zero_grad()
-                predictions = model(batch_X)
-                loss = criterion(predictions, batch_y)
-                loss.backward()
-                optimizer.step()
-                epoch_loss += loss.item()
-            log.info(f"Epoch {epoch + 1}/{hparams['n_epochs']}, Loss: {epoch_loss:.4f}")
+        log.info("Training complete!")
 
-        log.info("Evaluating Complex Model...")
-        evaluate_complex_model(model, X_test, y_test)
-    else:
-        log.error("Invalid mode. Use 'simple' or 'complex'.")
-        return
-
-    log.info("Training complete!")
-
-    # save weights
-    torch.save(model, f"{os.getcwd()}/trained_model.pt")
+        # save weights
+        torch.save(model, f"{os.getcwd()}/trained_model.pt")
 
 
 if __name__ == "__main__":
