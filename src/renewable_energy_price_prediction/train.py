@@ -16,7 +16,7 @@ from evaluate import evaluate_simple_model, evaluate_complex_model
 from utils import load_data, split_data
 
 log = logging.getLogger(__name__)
-with torch.profiler.profile(record_shapes=True, profile_memory=True) as prof:
+with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU], record_shapes=True, profile_memory=True) as prof:
     @hydra.main(version_base="1.1", config_path="../../configs", config_name="config.yaml")
     def train(config) -> None:
         """
@@ -77,7 +77,9 @@ with torch.profiler.profile(record_shapes=True, profile_memory=True) as prof:
 
         # save weights
         torch.save(model, f"{os.getcwd()}/trained_model.pt")
-
+        print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+        print(prof.key_averages(group_by_input_shape=True).table(sort_by="cpu_time_total", row_limit=10))
+        prof.export_chrome_trace("trace.json")
 
 if __name__ == "__main__":
     train()

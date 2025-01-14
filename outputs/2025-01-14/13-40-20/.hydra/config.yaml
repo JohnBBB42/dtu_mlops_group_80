@@ -1,0 +1,11 @@
+mode: complex
+experiment:
+  dataset_path: C:/Users/janle/Desktop/Master_local/4/dtu_mlops_group_80/data/processed/processed_data.csv
+  test_size: 0.3
+  batch_size: 16
+  n_epochs: 4
+  lr: 0.001
+  seed: 42
+optimizer:
+  _target_: torch.optim.Adam
+  lr: ${experiment.lr}
