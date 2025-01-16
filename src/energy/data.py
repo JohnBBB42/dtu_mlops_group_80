@@ -35,10 +35,10 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
 
     # Combine numeric features and target
     combined = pd.concat([numeric_features, numeric_target.rename("target")], axis=1)
-    
+
     # Drop rows where the target is NaN
     combined = combined.dropna(subset=["target"])
-    
+
     # Fill any remaining NaN values in features
     combined.fillna(method='ffill', inplace=True)
     combined.fillna(method='bfill', inplace=True)
@@ -71,10 +71,10 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
 
 def load_energy_data(processed_dir: str = "data/processed") -> tuple[TensorDataset, TensorDataset]:
     """Load processed tensors and return TensorDataset objects for train and test."""
-    train_features = torch.load(os.path.join(processed_dir, "train_features.pt"))
-    train_targets = torch.load(os.path.join(processed_dir, "train_targets.pt"))
-    test_features = torch.load(os.path.join(processed_dir, "test_features.pt"))
-    test_targets = torch.load(os.path.join(processed_dir, "test_targets.pt"))
+    train_features = torch.load(os.path.join(processed_dir, "train_features.pt"), weights_only=True)
+    train_targets = torch.load(os.path.join(processed_dir, "train_targets.pt"), weights_only=True)
+    test_features = torch.load(os.path.join(processed_dir, "test_features.pt"), weights_only=True)
+    test_targets = torch.load(os.path.join(processed_dir, "test_targets.pt"), weights_only=True)
 
     train_dataset = TensorDataset(train_features, train_targets)
     test_dataset = TensorDataset(test_features, test_targets)
