@@ -1,0 +1,41 @@
+{
+  "os": "Windows-10-10.0.26100-SP0",
+  "python": "CPython 3.11.11",
+  "startedAt": "2025-01-16T11:51:08.560689Z",
+  "program": "C:\\Users\\janle\\Desktop\\Master_local\\4\\dtu_mlops_group_80\\src\\lightning\\train.py",
+  "codePath": "src\\lightning\\train.py",
+  "git": {
+    "remote": "https://github.com/JohnBBB42/dtu_mlops_group_80.git",
+    "commit": "320b8a1fd4e985e904e0eacce0a14a4b5d56086f"
+  },
+  "root": ".",
+  "host": "Hoffnung",
+  "executable": "C:\\Users\\janle\\anaconda3\\envs\\ML_ops\\python.exe",
+  "codePathLocal": "..\\..\\..\\src\\lightning\\train.py",
+  "cpu_count": 10,
+  "cpu_count_logical": 12,
+  "gpu": "NVIDIA GeForce MX550",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "510870417408",
+      "used": "367138529280"
+    }
+  },
+  "memory": {
+    "total": "16831815680"
+  },
+  "cpu": {
+    "count": 10,
+    "countLogical": 12
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce MX550",
+      "memoryTotal": "2147483648",
+      "cudaCores": 1024,
+      "architecture": "Turing"
+    }
+  ],
+  "cudaVersion": "12.5"
+}
