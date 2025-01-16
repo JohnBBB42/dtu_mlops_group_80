@@ -32,7 +32,7 @@ line-length = 120
 omit = ["tests/*"]
 
 [project.scripts]
-preprocess_data = "lightning.data:main"
-train = "lightning.train:main"
+preprocess_data = "energy.data:main"
+train = "energy.train:main"
 evaluate = "renewable_energy_price_prediction.evaluate:app"
 visualize = "renewable_energy_price_prediction.visualize:app"

@@ -8,3 +8,7 @@ python-dotenv==1.0.1
 scikit_learn==1.6.1
 torch==2.5.1
 typer==0.15.1
+wandb==0.19.2
+pytorch_lightning==2.5.0.post0
+lightning==2.5.0.post0
+lightning-utilities==0.11.9

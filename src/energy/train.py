@@ -10,10 +10,10 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from omegaconf import OmegaConf
-from renewable_energy_price_prediction.model import NeuralNetwork
+from energy.model import NeuralNetwork
 #from renewable_energy_price_prediction.evaluate import evaluate_simple_model, evaluate_complex_model
 # Load and preprocess data
-from renewable_energy_price_prediction.data import EnergyDataModule
+from energy.data import EnergyDataModule
 import typer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 # Dynamically determine the path to the configs directory
