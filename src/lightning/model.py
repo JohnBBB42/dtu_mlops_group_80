@@ -9,7 +9,7 @@ class NeuralNetwork(pl.LightningModule):
         self.fc2 = nn.Linear(64, 32)
         self.fc3 = nn.Linear(32, 1)
         self.relu = nn.ReLU()
-        
+
         # Assuming regression task; change loss if classification or other tasks
         self.loss_fn = nn.MSELoss()
 
