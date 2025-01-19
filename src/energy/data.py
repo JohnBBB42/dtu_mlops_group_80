@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
 def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> None:
     """Process raw CSV data and save processed tensors."""
     os.makedirs(processed_dir, exist_ok=True)
@@ -30,7 +31,7 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
 
     # Select only numeric columns for features
     numeric_features = features_df.select_dtypes(include=[np.number])
-    numeric_target = pd.to_numeric(target_series, errors='coerce')
+    numeric_target = pd.to_numeric(target_series, errors="coerce")
 
     # Combine numeric features and target
     combined = pd.concat([numeric_features, numeric_target.rename("target")], axis=1)
@@ -39,8 +40,8 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
     combined = combined.dropna(subset=["target"])
 
     # Fill any remaining NaN values in features
-    combined.fillna(method='ffill', inplace=True)
-    combined.fillna(method='bfill', inplace=True)
+    combined.fillna(method="ffill", inplace=True)
+    combined.fillna(method="bfill", inplace=True)
 
     if combined.empty:
         raise ValueError("No valid numeric data after preprocessing. Check your raw data and conversion steps.")
@@ -68,6 +69,7 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
     torch.save(test_targets, os.path.join(processed_dir, "test_targets.pt"))
     print(f"Data preprocessed and saved to {processed_dir}")
 
+
 def load_energy_data(processed_dir: str = "data/processed") -> tuple[TensorDataset, TensorDataset]:
     """Load processed tensors and return TensorDataset objects for train and test."""
     train_features = torch.load(os.path.join(processed_dir, "train_features.pt"), weights_only=True)
@@ -78,6 +80,7 @@ def load_energy_data(processed_dir: str = "data/processed") -> tuple[TensorDatas
     train_dataset = TensorDataset(train_features, train_targets)
     test_dataset = TensorDataset(test_features, test_targets)
     return train_dataset, test_dataset
+
 
 class EnergyDataModule(pl.LightningDataModule):
     def __init__(self, data_dir="data/processed", batch_size=64):
@@ -101,6 +104,7 @@ class EnergyDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
+
 
 if __name__ == "__main__":
     main()

@@ -25,10 +25,8 @@ def load_checkpoint_safely(checkpoint_path: str):
             # Provide an empty dict if hyperparameters are missing
             "hyper_parameters": checkpoint.get("hyper_parameters", {}),
             # If there's no PL version, add the current installed version
-            "pytorch-lightning_version": checkpoint.get(
-                "pytorch-lightning_version", pl.__version__
-            ),
-            "state_dict": {}
+            "pytorch-lightning_version": checkpoint.get("pytorch-lightning_version", pl.__version__),
+            "state_dict": {},
         }
 
         # Move model weights into "state_dict"
@@ -106,4 +104,3 @@ def test_model_speed():
     total_time = end_time - start_time
     print(f"Total time for 100 predictions: {total_time} seconds")
     assert total_time < 1, "Model took too long to process 100 predictions!"
-

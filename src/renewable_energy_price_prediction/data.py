@@ -44,7 +44,7 @@ class MyDataset(Dataset):
             df.drop(index=df.index[0], axis=0, inplace=True)
 
             # Convert all columns to float except for 'Date'
-            df = df.astype({col: 'float' for col in df.columns if col != 'Date (GMT+1)'})
+            df = df.astype({col: "float" for col in df.columns if col != "Date (GMT+1)"})
             all_data.append(df)
 
         # Concatenate all data into a single DataFrame
@@ -54,7 +54,6 @@ class MyDataset(Dataset):
         output_file = output_folder / "processed_data.csv"
         merged_data.to_csv(output_file, index=False)
         print(f"Processed data saved to: {output_file}")
-
 
 
 def preprocess(raw_data_path: Path, output_folder: Path) -> None:
