@@ -1,3 +1,4 @@
 import pstats
-p = pstats.Stats('profile.txt')
-p.sort_stats('cumulative').print_stats(10)
+
+p = pstats.Stats("profile.txt")
+p.sort_stats("cumulative").print_stats(10)

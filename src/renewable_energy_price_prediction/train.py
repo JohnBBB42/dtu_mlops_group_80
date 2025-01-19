@@ -11,12 +11,19 @@ from torch.utils.data import DataLoader, TensorDataset
 from omegaconf import OmegaConf
 from model import get_linear_regression_model, NeuralNetwork
 from evaluate import evaluate_simple_model, evaluate_complex_model
+
 # Load and preprocess data
 from utils import load_data, split_data
 from torch.profiler import profile, tensorboard_trace_handler, ProfilerActivity
 
 log = logging.getLogger(__name__)
-with profile(activities=[ProfilerActivity.CPU], record_shapes=True, profile_memory=True, on_trace_ready=tensorboard_trace_handler("./log/energy")) as prof:
+with profile(
+    activities=[ProfilerActivity.CPU],
+    record_shapes=True,
+    profile_memory=True,
+    on_trace_ready=tensorboard_trace_handler("./log/energy"),
+) as prof:
+
     @hydra.main(version_base="1.1", config_path="../../configs", config_name="config.yaml")
     def train(config) -> None:
         """
@@ -26,7 +33,6 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True, profile_memo
         log.info(f"Configuration: \n{OmegaConf.to_yaml(config)}")
         hparams = config.experiment
 
-        
         X, y = load_data(hparams["dataset_path"])
         X_train, X_test, y_train, y_test = split_data(X, y, test_size=hparams["test_size"])
 
@@ -36,14 +42,15 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True, profile_memo
             model.fit(X_train, y_train)
             log.info("Evaluating Simple Model...")
             evaluate_simple_model(model, X_test, y_test)
-            #save_model(model, "simple_model.pkl")
+            # save_model(model, "simple_model.pkl")
         elif config.mode == "complex":
             log.info("Training Complex Model (Neural Network)...")
             input_size = X_train.shape[1]
 
             # Prepare data for PyTorch
-            train_dataset = TensorDataset(torch.tensor(X_train, dtype=torch.float32),
-                                        torch.tensor(y_train, dtype=torch.float32).view(-1, 1))
+            train_dataset = TensorDataset(
+                torch.tensor(X_train, dtype=torch.float32), torch.tensor(y_train, dtype=torch.float32).view(-1, 1)
+            )
             train_loader = DataLoader(train_dataset, batch_size=hparams["batch_size"], shuffle=True)
 
             model = NeuralNetwork(input_size)
@@ -79,7 +86,8 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True, profile_memo
         torch.save(model, f"{os.getcwd()}/trained_model.pt")
         print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
         print(prof.key_averages(group_by_input_shape=True).table(sort_by="cpu_time_total", row_limit=10))
-        #prof.export_chrome_trace("trace.json")
+        # prof.export_chrome_trace("trace.json")
+
 
 if __name__ == "__main__":
     train()

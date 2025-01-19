@@ -2,6 +2,7 @@ import pytorch_lightning as pl
 import torch
 from torch import nn
 
+
 class NeuralNetwork(pl.LightningModule):
     def __init__(self, input_size: int):
         super(NeuralNetwork, self).__init__()
@@ -43,6 +44,7 @@ class NeuralNetwork(pl.LightningModule):
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=1e-3)
+
 
 if __name__ == "__main__":
     # Example usage with dummy data

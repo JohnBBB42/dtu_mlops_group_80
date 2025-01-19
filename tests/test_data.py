@@ -3,6 +3,7 @@ import torch
 import pandas as pd
 from energy.data import main as preprocess_main, load_energy_data, EnergyDataModule
 
+
 @pytest.fixture
 def dummy_processed_data(tmp_path):
     """
@@ -10,13 +11,14 @@ def dummy_processed_data(tmp_path):
     """
     # Create dummy data tensors
     features = torch.randn(100, 10)  # 100 samples, 10 features
-    targets = torch.randn(100, 1)    # 100 targets
+    targets = torch.randn(100, 1)  # 100 targets
     # Save dummy tensors to temporary directory
     torch.save(features, tmp_path / "train_features.pt")
     torch.save(targets, tmp_path / "train_targets.pt")
     torch.save(features, tmp_path / "test_features.pt")
     torch.save(targets, tmp_path / "test_targets.pt")
     return str(tmp_path)
+
 
 def test_preprocess_data_creates_pt_files(tmp_path):
     # Set up temporary raw and processed directories
@@ -27,7 +29,7 @@ def test_preprocess_data_creates_pt_files(tmp_path):
 
     # Create a minimal CSV file with numeric features and target
     csv_content = (
-        "f1,f2,target\n"       # header
+        "f1,f2,target\n"  # header
         "unit1,unit2,unit3\n"  # units row to skip
         "1,2,3\n"
         "4,5,6\n"
@@ -39,10 +41,10 @@ def test_preprocess_data_creates_pt_files(tmp_path):
     preprocess_main(raw_dir=str(raw_dir), processed_dir=str(processed_dir))
 
     # Check that expected .pt files were created
-    for fname in ["train_features.pt", "train_targets.pt", 
-                  "test_features.pt", "test_targets.pt"]:
+    for fname in ["train_features.pt", "train_targets.pt", "test_features.pt", "test_targets.pt"]:
         file_path = processed_dir / fname
         assert file_path.exists(), f"{fname} was not created."
+
 
 def test_load_energy_data(dummy_processed_data):
     # Use the dummy processed data from the fixture
@@ -58,6 +60,7 @@ def test_load_energy_data(dummy_processed_data):
     assert test_features.shape == (100, 10)
     assert test_targets.shape == (100, 1)
 
+
 def test_energy_datamodule_setup(tmp_path):
     # Set up temporary raw and processed directories
     raw_dir = tmp_path / "raw"
@@ -67,7 +70,7 @@ def test_energy_datamodule_setup(tmp_path):
 
     # Create a minimal CSV file
     csv_content = (
-        "f1,f2,target\n"       # header
+        "f1,f2,target\n"  # header
         "unit1,unit2,unit3\n"  # units row
         "1,2,3\n"
         "4,5,6\n"

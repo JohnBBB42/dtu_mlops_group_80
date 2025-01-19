@@ -35,6 +35,7 @@ def load_model(artifact_name: str):
     model = MyAwesomeModel.load_from_checkpoint(checkpoint_path)
     return model
 
+
 def test_model_speed():
     """
     Test that the model can do 100 predictions in under 1 second.
@@ -56,4 +57,3 @@ def test_model_speed():
     total_time = end_time - start_time
     print(f"Total time for 100 predictions: {total_time} seconds")
     assert total_time < 1, "Model took too long to process 100 predictions!"
-
