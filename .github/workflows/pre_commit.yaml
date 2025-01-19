@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ${{ matrix.operating-system }}
@@ -36,8 +39,6 @@ jobs:
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
-        env:
-            GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           commit_message: Pre-commit fixes
           commit_options: '--no-verify'
