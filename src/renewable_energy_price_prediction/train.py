@@ -9,7 +9,6 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from omegaconf import OmegaConf
-from sklearn.metrics import mean_squared_error, r2_score
 from model import get_linear_regression_model, NeuralNetwork
 from evaluate import evaluate_simple_model, evaluate_complex_model
 # Load and preprocess data

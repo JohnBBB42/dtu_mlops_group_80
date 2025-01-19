@@ -7,7 +7,7 @@ def evaluate_simple_model(model, X_test, y_test):
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
-    print(f"Simple Model - Linear Regression")
+    print("Simple Model - Linear Regression")
     print(f"Mean Squared Error: {mse:.2f}")
     print(f"R-squared: {r2:.2f}")
 
@@ -25,6 +25,6 @@ def evaluate_complex_model(model, X_test, y_test):
         mse = mean_squared_error(y_test, predictions)
         r2 = r2_score(y_test, predictions)
 
-    print(f"\nComplex Model - Neural Network")
+    print("\nComplex Model - Neural Network")
     print(f"Mean Squared Error: {mse:.2f}")
     print(f"R-squared: {r2:.2f}")

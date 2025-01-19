@@ -4,7 +4,6 @@ import torch
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
-from pathlib import Path
 import numpy as np
 
 def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> None:
