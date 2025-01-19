@@ -38,5 +38,5 @@ jobs:
 
       - name: Run tests & coverage
         run: |
-          coverage run -m pytest tests/
-          coverage report -m
+          coverage run --source=. --omit=*/_remote_module_non_scriptable.py -m pytest tests/
+          coverage report -m --omit=*/_remote_module_non_scriptable.py
