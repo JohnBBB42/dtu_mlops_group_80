@@ -1,9 +1,6 @@
-import os
 import pytest
 import torch
 import pandas as pd
-import numpy as np
-from pathlib import Path
 from energy.data import main as preprocess_main, load_energy_data, EnergyDataModule
 
 @pytest.fixture
