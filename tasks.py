@@ -40,9 +40,9 @@ def preprocess_data(ctx: Context) -> None:
 
 
 @task
-def train(c, lr=0.01, batch_size=32, epochs=10) -> None:
+def train(c) -> None:
     """Train model."""
-    c.run(f"python src/energy/train.py --lr={lr} --batch_size={batch_size} --epochs={epochs}", echo=True, pty=not WINDOWS)
+    c.run(f"python src/{PROJECT_NAME}/train.py", echo=True, pty=not WINDOWS)
 
 
 @task

@@ -9,6 +9,7 @@ from energy.model import NeuralNetwork
 from energy.data import EnergyDataModule
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 import wandb
+from typing_extensions import Annotated
 
 # Initialize Typer app
 app = typer.Typer()
@@ -19,35 +20,35 @@ logger = pl.loggers.WandbLogger(project="lightning_energy")
 
 @app.command()
 def train(
-    lr: float = typer.Option(0.001, help="Learning rate for training."),
-    batch_size: int = typer.Option(32, help="Batch size for training."),
-    epochs: int = typer.Option(10, help="Number of training epochs."),
-    hydra_cfg_path: str = typer.Option("../../configs", help="Path to Hydra configuration directory."),
-    hydra_cfg_name: str = typer.Option("config.yaml", help="Name of the Hydra configuration file."),
+    lr: Annotated[float, typer.Option(help="Learning rate for training.")] = None,
+    batch_size: Annotated[int, typer.Option(help="Batch size for training.")] = None,
+    epochs: Annotated[int, typer.Option(help="Number of training epochs.")] = None,
+    cfg_path: Annotated[str, typer.Option(help="Path to Hydra configuration directory.")] = "../../configs",
+    cfg_name: Annotated[str, typer.Option(help="Name of the Hydra configuration file.")] = "config.yaml",
 ):
     """
     Train a neural network model with specified hyperparameters.
     """
 
-    @hydra.main(version_base="1.1", config_path=hydra_cfg_path, config_name=hydra_cfg_name)
     def hydra_main(cfg: DictConfig) -> None:
         # Combine Hydra configuration with CLI arguments
         print("Hydra Configuration:")
         print(OmegaConf.to_yaml(cfg))
 
-        # Log CLI arguments
-        print(f"CLI Arguments: lr={lr}, batch_size={batch_size}, epochs={epochs}")
+        # Combine CLI arguments with Hydra configuration
+        effective_lr = lr if lr is not None else cfg.hyperparameters.lr
+        effective_batch_size = batch_size if batch_size is not None else cfg.hyperparameters.batch_size
+        effective_epochs = epochs if epochs is not None else cfg.hyperparameters.n_epochs
 
         # Setup Data
         data_dir = Path(__file__).resolve().parents[2] / "data" / "processed"
-        data_module = EnergyDataModule(data_dir=str(data_dir), batch_size=batch_size)
+        data_module = EnergyDataModule(data_dir=str(data_dir), batch_size=effective_batch_size)
         data_module.setup("fit")
 
         # Setup Model
         sample_features, _ = data_module.train_dataset[0]
         input_size = sample_features.shape[0]
-        model = NeuralNetwork(input_size=10, lr=lr)  # Pass learning rate to the model
-        print(f"Initialized model with input size: {input_size}")
+        model = NeuralNetwork(input_size=input_size, lr=effective_lr)  # Pass learning rate to the model
 
         # Callbacks
         early_stopping_callback = EarlyStopping(monitor="val_loss", patience=3, verbose=True, mode="min")
@@ -56,7 +57,7 @@ def train(
         # Trainer
         trainer = pl.Trainer(
             default_root_dir="my_logs_dir",
-            max_epochs=epochs,
+            max_epochs=effective_epochs,
             callbacks=[early_stopping_callback, checkpoint_callback],
             profiler="simple",
             logger=logger,
@@ -73,8 +74,10 @@ def train(
         artifact.add_file("model.pth")
         run.log_artifact(artifact)
 
-    # Run Hydra main with the passed configuration
-    hydra_main()
+    # Hydra setup: Avoid parsing `typer` arguments
+    with hydra.initialize(config_path=cfg_path):
+        cfg = hydra.compose(config_name=cfg_name)
+        hydra_main(cfg)
 
 if __name__ == "__main__":
     app()
