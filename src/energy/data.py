@@ -24,10 +24,12 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
         raise FileNotFoundError(f"No CSV files found in {raw_dir}")
 
     merged_df = pd.concat(all_dfs, ignore_index=True)
+    target_column_name = 'Day Ahead Auction (DE-LU)'
+
 
     # Separate features and target: assume last column is target
-    features_df = merged_df.iloc[:, :-1]
-    target_series = merged_df.iloc[:, -1]
+    features_df = merged_df.iloc[:, 1:-2]
+    target_series = merged_df[target_column_name]
 
     # Select only numeric columns for features
     numeric_features = features_df.select_dtypes(include=[np.number])

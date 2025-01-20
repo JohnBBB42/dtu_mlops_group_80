@@ -9,6 +9,7 @@ import hydra
 import torch
 from omegaconf import OmegaConf
 from energy.model import NeuralNetwork
+import wandb
 
 # from renewable_energy_price_prediction.evaluate import evaluate_simple_model, evaluate_complex_model
 # Load and preprocess data
@@ -20,6 +21,7 @@ script_dir = Path(__file__).parent  # src/renewable_energy_price_prediction/
 project_root = script_dir.parent.parent  # dtu_mlops_group_80/
 config_dir = project_root / "configs"  # dtu_mlops_group_80/configs
 
+run = wandb.init(project = "artifacts-example", job_type = "add-dataset")
 logger = pl.loggers.WandbLogger(
     project="lightning_energy",
     #config=dict(str(config_dir).hyperparameters),  # Log hyperparameters
@@ -52,12 +54,12 @@ with torch.profiler.profile(
         model = NeuralNetwork(input_size=input_size)
         print(f"Initialized model with input size: {input_size}")
 
-        early_stopping_callback = EarlyStopping(monitor="val_loss", patience=5, verbose=True, mode="min")
+        early_stopping_callback = EarlyStopping(monitor="val_loss", patience=3, verbose=True, mode="min")
         checkpoint_callback = ModelCheckpoint(dirpath="./models", monitor="val_loss", mode="min")
         trainer = pl.Trainer(
             default_root_dir="my_logs_dir",
-            max_epochs=100,
-            limit_train_batches=1.0,
+            max_epochs=2,
+            limit_train_batches=0.2,
             callbacks=[early_stopping_callback, checkpoint_callback],
             profiler="simple",
             logger=logger,
@@ -70,9 +72,15 @@ with torch.profiler.profile(
         trainer.test(model, datamodule=data_module)
         # log.info("Evaluating Complex Model...")
         # evaluate_complex_model(model, X_test, y_test)
-        log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+        #log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
         #logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
         log.info("Training complete!")
+
+        torch.save(model.state_dict(), "model.pth")
+        artifact = wandb.Artifact(name = "example_artifact", type = "dataset")
+        artifact.add_file("model.pth")
+        run.log_artifact(artifact)
+        
 
 
 if __name__ == "__main__":
