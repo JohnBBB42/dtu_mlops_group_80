@@ -24,8 +24,7 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
         raise FileNotFoundError(f"No CSV files found in {raw_dir}")
 
     merged_df = pd.concat(all_dfs, ignore_index=True)
-    target_column_name = 'Day Ahead Auction (DE-LU)'
-
+    target_column_name = "Day Ahead Auction (DE-LU)"
 
     # Separate features and target: assume last column is target
     features_df = merged_df.iloc[:, 1:-2]
