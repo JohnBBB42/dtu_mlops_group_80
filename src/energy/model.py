@@ -4,12 +4,15 @@ from torch import nn
 
 
 class NeuralNetwork(pl.LightningModule):
-    def __init__(self, input_size: int):
+    def __init__(self, input_size: int, lr: float = 0.01):
         super(NeuralNetwork, self).__init__()
         self.fc1 = nn.Linear(input_size, 64)
         self.fc2 = nn.Linear(64, 32)
         self.fc3 = nn.Linear(32, 1)
         self.relu = nn.ReLU()
+
+        # Store the learning rate
+        self.lr = lr
 
         # Assuming regression task; change loss if classification or other tasks
         self.loss_fn = nn.MSELoss()
@@ -21,7 +24,6 @@ class NeuralNetwork(pl.LightningModule):
         return x
 
     def training_step(self, batch, batch_idx):
-        # Assuming batch is a tuple (inputs, targets)
         x, y = batch
         y_pred = self(x)
         y_pred = y_pred.squeeze(-1)
@@ -46,7 +48,8 @@ class NeuralNetwork(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=1e-3)
+        # Use the stored learning rate
+        return torch.optim.Adam(self.parameters(), lr=self.lr)
 
 
 if __name__ == "__main__":

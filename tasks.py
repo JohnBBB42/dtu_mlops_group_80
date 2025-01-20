@@ -3,8 +3,8 @@ import os
 from invoke import Context, task
 
 WINDOWS = os.name == "nt"
-PROJECT_NAME = "renewable_energy_price_prediction"
-PYTHON_VERSION = "3.12"
+PROJECT_NAME = "energy"
+PYTHON_VERSION = "3.11"
 
 
 # Setup commands
@@ -40,9 +40,9 @@ def preprocess_data(ctx: Context) -> None:
 
 
 @task
-def train(ctx: Context) -> None:
+def train(c, lr=0.01, batch_size=32, epochs=10) -> None:
     """Train model."""
-    ctx.run(f"python src/{PROJECT_NAME}/train.py", echo=True, pty=not WINDOWS)
+    c.run(f"python src/energy/train.py --lr={lr} --batch_size={batch_size} --epochs={epochs}", echo=True, pty=not WINDOWS)
 
 
 @task

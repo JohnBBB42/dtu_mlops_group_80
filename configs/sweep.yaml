@@ -5,7 +5,7 @@ entity: Jan  # change this
 metric:
     goal: minimize
     name: validation_loss
-hyperparameters:
+parameters:
     learning_rate:
         min: 0.0001
         max: 0.1
