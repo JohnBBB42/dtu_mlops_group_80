@@ -24,21 +24,21 @@ class NeuralNetwork(pl.LightningModule):
         # Assuming batch is a tuple (inputs, targets)
         x, y = batch
         y_pred = self(x)
-        loss = self.loss_fn(y_pred, y)
+        loss = self.loss_fn(y_pred.squeeze(), y)
         self.log("train_loss", loss, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_pred = self(x)
-        loss = self.loss_fn(y_pred, y)
+        loss = self.loss_fn(y_pred.squeeze(), y)
         self.log("val_loss", loss, prog_bar=True, on_epoch=True)
         return loss
 
     def test_step(self, batch, batch_idx):
         x, y = batch
         y_pred = self(x)
-        loss = self.loss_fn(y_pred, y)
+        loss = self.loss_fn(y_pred.squeeze(), y)
         self.log("test_loss", loss, prog_bar=True)
         return loss
 
