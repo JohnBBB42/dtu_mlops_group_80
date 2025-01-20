@@ -45,15 +45,15 @@ with torch.profiler.profile(
         model = NeuralNetwork(input_size=input_size)
         print(f"Initialized model with input size: {input_size}")
 
-        early_stopping_callback = EarlyStopping(monitor="val_loss", patience=3, verbose=True, mode="min")
+        early_stopping_callback = EarlyStopping(monitor="val_loss", patience=5, verbose=True, mode="min")
         checkpoint_callback = ModelCheckpoint(dirpath="./models", monitor="val_loss", mode="min")
         trainer = pl.Trainer(
             default_root_dir="my_logs_dir",
-            max_epochs=10,
+            max_epochs=100,
             limit_train_batches=0.2,
             callbacks=[early_stopping_callback, checkpoint_callback],
             profiler="simple",
-            logger=pl.loggers.WandbLogger(project="lightning_mnist"),
+            logger=pl.loggers.WandbLogger(project="lightning_energy"),
         )
 
         log.info("Training Neural Network...")
