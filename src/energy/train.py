@@ -24,6 +24,7 @@ app = typer.Typer()
 run = wandb.init(project="energy_prediction", job_type="training")
 logger = pl.loggers.WandbLogger(project="lightning_energy")
 
+
 @app.command()
 def train(
     lr: Annotated[float, typer.Option(help="Learning rate for training.")] = None,
@@ -108,6 +109,7 @@ def train(
     with hydra.initialize(config_path=cfg_path):
         cfg = hydra.compose(config_name=cfg_name)
         hydra_main(cfg)
+
 
 if __name__ == "__main__":
     app()
