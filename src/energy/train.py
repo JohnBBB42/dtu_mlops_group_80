@@ -21,7 +21,7 @@ script_dir = Path(__file__).parent  # src/renewable_energy_price_prediction/
 project_root = script_dir.parent.parent  # dtu_mlops_group_80/
 config_dir = project_root / "configs"  # dtu_mlops_group_80/configs
 
-run = wandb.init(project = "artifacts-example", job_type = "add-dataset")
+run = wandb.init(project = "energy_prediction", job_type = "training")
 logger = pl.loggers.WandbLogger(
     project="lightning_energy",
     #config=dict(str(config_dir).hyperparameters),  # Log hyperparameters
