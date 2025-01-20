@@ -20,6 +20,13 @@ script_dir = Path(__file__).parent  # src/renewable_energy_price_prediction/
 project_root = script_dir.parent.parent  # dtu_mlops_group_80/
 config_dir = project_root / "configs"  # dtu_mlops_group_80/configs
 
+logger = pl.loggers.WandbLogger(
+    project="lightning_energy",
+    #config=dict(str(config_dir).hyperparameters),  # Log hyperparameters
+    group="experiment_group_name",       # Optional: group runs
+    tags=["energy_prediction"]           # Optional: tags for filtering runs
+)
+
 # Determine absolute path to the processed data directory
 data_dir = Path(__file__).resolve().parents[2] / "data" / "processed"
 
@@ -50,10 +57,12 @@ with torch.profiler.profile(
         trainer = pl.Trainer(
             default_root_dir="my_logs_dir",
             max_epochs=100,
-            limit_train_batches=0.2,
+            limit_train_batches=1.0,
             callbacks=[early_stopping_callback, checkpoint_callback],
             profiler="simple",
-            logger=pl.loggers.WandbLogger(project="lightning_energy"),
+            logger=logger,
+            log_every_n_steps=1,
+
         )
 
         log.info("Training Neural Network...")
@@ -61,6 +70,8 @@ with torch.profiler.profile(
         trainer.test(model, datamodule=data_module)
         # log.info("Evaluating Complex Model...")
         # evaluate_complex_model(model, X_test, y_test)
+        log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+        #logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
         log.info("Training complete!")
 
 
