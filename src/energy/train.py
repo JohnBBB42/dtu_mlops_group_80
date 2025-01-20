@@ -50,24 +50,15 @@ with torch.profiler.profile(
 
         sample_features, _ = data_module.train_dataset[0]
         input_size = sample_features.shape[0]
-        model = NeuralNetwork(
-            input_size=input_size,
-            hidden_units=hparams.hidden_units,
-            lr=hparams.learning_rate
-        )
+        model = NeuralNetwork(input_size=input_size, hidden_units=hparams.hidden_units, lr=hparams.learning_rate)
 
         print(f"Initialized model with input size: {input_size}")
 
         early_stopping_callback = EarlyStopping(
-            monitor="val_loss",
-            patience=config.early_stopping.patience,
-            verbose=True,
-            mode="min")
+            monitor="val_loss", patience=config.early_stopping.patience, verbose=True, mode="min"
+        )
 
-        checkpoint_callback = ModelCheckpoint(
-            dirpath="./models",
-            monitor="val_loss",
-            mode="min")
+        checkpoint_callback = ModelCheckpoint(dirpath="./models", monitor="val_loss", mode="min")
 
         trainer = pl.Trainer(
             default_root_dir="my_logs_dir",
