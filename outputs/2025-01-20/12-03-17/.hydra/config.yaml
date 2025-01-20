@@ -1,0 +1,11 @@
+hyperparameters:
+  test_size: 0.3
+  batch_size: 16
+  max_epochs: 50
+  hidden_units: 64
+  learning_rate: 0.001
+  seed: 42
+early_stopping:
+  patience: 5
+trainer:
+  limit_train_batches: 0.2

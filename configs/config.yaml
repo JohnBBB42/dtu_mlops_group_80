@@ -1,6 +1,13 @@
 hyperparameters:
   test_size: 0.3
   batch_size: 16
-  n_epochs: 4
-  lr: 0.001
+  max_epochs: 4      # matches hparams.max_epochs in train.py
+  hidden_units: 64   # matches hparams.hidden_units in train.py
+  learning_rate: 0.001  # matches hparams.learning_rate in train.py
   seed: 42
+
+early_stopping:
+  patience: 5        # matches config.early_stopping.patience in train.py
+
+trainer:
+  limit_train_batches: 0.2  # matches config.trainer.limit_train_batches in train.py
