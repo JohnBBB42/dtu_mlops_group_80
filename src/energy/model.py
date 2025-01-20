@@ -14,7 +14,6 @@ class NeuralNetwork(pl.LightningModule):
         self.loss_fn = nn.MSELoss()
         self.lr = lr
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
