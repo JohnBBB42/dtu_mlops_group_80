@@ -77,7 +77,7 @@ with torch.profiler.profile(
         log.info("Training complete!")
 
         torch.save(model.state_dict(), "model.pth")
-        artifact = wandb.Artifact(name = "example_artifact", type = "dataset")
+        artifact = wandb.Artifact(name = "example_artifact", type = "model")
         artifact.add_file("model.pth")
         run.log_artifact(artifact)
         
