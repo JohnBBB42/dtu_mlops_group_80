@@ -22,9 +22,9 @@ config_dir = project_root / "configs"  # dtu_mlops_group_80/configs
 
 logger = pl.loggers.WandbLogger(
     project="lightning_energy",
-    #config=dict(str(config_dir).hyperparameters),  # Log hyperparameters
-    group="experiment_group_name",       # Optional: group runs
-    tags=["energy_prediction"]           # Optional: tags for filtering runs
+    # config=dict(str(config_dir).hyperparameters),  # Log hyperparameters
+    group="experiment_group_name",  # Optional: group runs
+    tags=["energy_prediction"],  # Optional: tags for filtering runs
 )
 
 # Determine absolute path to the processed data directory
@@ -62,7 +62,6 @@ with torch.profiler.profile(
             profiler="simple",
             logger=logger,
             log_every_n_steps=1,
-
         )
 
         log.info("Training Neural Network...")
@@ -71,7 +70,7 @@ with torch.profiler.profile(
         # log.info("Evaluating Complex Model...")
         # evaluate_complex_model(model, X_test, y_test)
         log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-        #logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
+        # logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
         log.info("Training complete!")
 
 
