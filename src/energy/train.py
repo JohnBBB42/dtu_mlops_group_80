@@ -11,6 +11,7 @@ import numpy as np
 from omegaconf import OmegaConf
 from energy.model import NeuralNetwork
 from energy.evaluate import evaluate_neural_network
+import wandb
 
 # Load and preprocess data
 from energy.data import EnergyDataModule
@@ -21,6 +22,7 @@ script_dir = Path(__file__).parent  # src/renewable_energy_price_prediction/
 project_root = script_dir.parent.parent  # dtu_mlops_group_80/
 config_dir = project_root / "configs"  # dtu_mlops_group_80/configs
 
+run = wandb.init(project = "artifacts-example", job_type = "add-dataset")
 logger = pl.loggers.WandbLogger(
     project="lightning_energy",
     # config=dict(str(config_dir).hyperparameters),  # Log hyperparameters
@@ -92,7 +94,17 @@ with torch.profiler.profile(
 
         log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
         # logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
+        # log.info("Evaluating Complex Model...")
+        # evaluate_complex_model(model, X_test, y_test)
+        #log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+        #logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
         log.info("Training complete!")
+
+        torch.save(model.state_dict(), "model.pth")
+        artifact = wandb.Artifact(name = "example_artifact", type = "model")
+        artifact.add_file("model.pth")
+        run.log_artifact(artifact)
+        
 
 
 if __name__ == "__main__":
