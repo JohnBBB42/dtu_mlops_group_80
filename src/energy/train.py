@@ -106,11 +106,11 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             log.info("Training complete!")
 
             # Save Model
-            torch.save(model.state_dict(), config_file_path+"model.pth")
+            torch.save(model.state_dict(), config_file_path + "model.pth")
             artifact = wandb.Artifact(name="example_artifact", type="model")
             artifact.add_file("model.pth")
             run.log_artifact(artifact)
-        
+
         # Hydra setup: Avoid parsing `typer` arguments
         with hydra.initialize(config_path=cfg_path):
             cfg = hydra.compose(config_name=cfg_name)
