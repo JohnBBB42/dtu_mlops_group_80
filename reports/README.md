@@ -163,7 +163,20 @@ will check the repositories and the code to verify your answers.
 > *complete copy of our development environment, one would have to run the following commands*
 >
 > Answer:
+We use pip and conda for package managing and virtual enviorments. 
+The list of dependencies are specified in requirements.txt and requirements_dev.txt. 
+We use pipreqs to automatically create the requirements.txt
+To get an exact copy of the enviorment a new team member must: 
+1. clone the git repository
+git clone https://github.com/JohnBBB42/dtu_mlops_group_80.git
+2. navigate to the project directory 
+3. create the conda enviorment 
+conda create --name my_environment_name --file requirements.txt
+4. activate my_environment_name
+5. install dev requirements
+pip install -r requirements_dev.txt
 
+This process ensures that all required packages are installed and the environment is consistent across all team members.
 --- question 4 fill here ---
 
 ### Question 5
