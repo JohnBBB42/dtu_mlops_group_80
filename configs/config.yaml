@@ -1,5 +1,5 @@
 hyperparameters:
-  batch-size: 4
+  batch_size: 4
   n_epochs: 2
   lr: 0.001
   seed: 42

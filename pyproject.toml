@@ -34,5 +34,3 @@ omit = ["tests/*"]
 [project.scripts]
 preprocess_data = "energy.data:main"
 train = "energy.train:main"
-evaluate = "renewable_energy_price_prediction.evaluate:app"
-visualize = "renewable_energy_price_prediction.visualize:app"
