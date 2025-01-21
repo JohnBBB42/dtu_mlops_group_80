@@ -1,0 +1,29 @@
+{
+  "os":  "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python":  "CPython 3.12.8",
+  "startedAt":  "2025-01-21T16:46:26.827817Z",
+  "program":  "/home/amazonas/miniconda3/envs/mlops_env80/bin/train",
+  "git":  {
+    "remote":  "git@github.com:JohnBBB42/dtu_mlops_group_80.git",
+    "commit":  "2df703ef1197cfdb9669a0b1c6745826d9ac07b5"
+  },
+  "email":  "Jhz209@alumni.ku.dk",
+  "root":  "/mnt/c/Users/Jonat/dtu_mlops_group_80",
+  "host":  "DESKTOP-1GS19HU",
+  "executable":  "/home/amazonas/miniconda3/envs/mlops_env80/bin/python",
+  "cpu_count":  4,
+  "cpu_count_logical":  8,
+  "disk":  {
+    "/":  {
+      "total":  "1081101176832",
+      "used":  "34239307776"
+    }
+  },
+  "memory":  {
+    "total":  "8197791744"
+  },
+  "cpu":  {
+    "count":  4,
+    "countLogical":  8
+  }
+}

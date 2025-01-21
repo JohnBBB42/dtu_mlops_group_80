@@ -1,4 +1,4 @@
-service: 'bentoml_service:EnergyPricePredictor'
+service: 'bentoml_service:EnergyPricePredictorService'
 labels:
   owner: bentoml-team
   project: gallery
