@@ -79,6 +79,10 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
 
             # Training
             trainer.fit(model, datamodule=data_module)
+
+            config_file_path = Path.cwd() / "config.yaml"
+            OmegaConf.save(cfg, config_file_path)
+
             trainer.test(model, datamodule=data_module)
 
             log.info("Evaluating Complex Model...")
@@ -105,11 +109,11 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             log.info("Training complete!")
 
             # Save Model
-            torch.save(model.state_dict(), "model.pth")
+            torch.save(model.state_dict(), config_file_path+"model.pth")
             artifact = wandb.Artifact(name="example_artifact", type="model")
             artifact.add_file("model.pth")
             run.log_artifact(artifact)
-
+        
         # Hydra setup: Avoid parsing `typer` arguments
         with hydra.initialize(config_path=cfg_path):
             cfg = hydra.compose(config_name=cfg_name)
