@@ -12,15 +12,17 @@ from energy.model import NeuralNetwork
 
 app = typer.Typer()
 
+
 @app.command()
 def evaluate(
     model_path: str = typer.Option("models/model.pth", help="Path to the saved model file."),
     cfg_path: str = typer.Option("../../configs", help="Path to Hydra configuration directory."),
-    cfg_name: str = typer.Option("config.yaml", help="Name of the Hydra configuration file.")
+    cfg_name: str = typer.Option("config.yaml", help="Name of the Hydra configuration file."),
 ):
     """
     Evaluate a trained neural network model using specified configuration.
     """
+
     def evaluate_neural_network(model, X_test, y_test):
         # Evaluate the neural network
         model.eval()
@@ -70,6 +72,7 @@ def evaluate(
     with hydra.initialize(config_path=cfg_path):
         cfg = hydra.compose(config_name=cfg_name)
         hydra_main(cfg)
+
 
 if __name__ == "__main__":
     app()
