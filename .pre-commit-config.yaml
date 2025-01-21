@@ -9,6 +9,7 @@ repos:
     -   id: check-yaml
     -   id: check-added-large-files
     -   id: check-json
+    -   id: check-merge-conflict
 
 repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
