@@ -11,6 +11,7 @@ from energy.model import NeuralNetwork
 from energy.evaluate import evaluate_neural_network
 import wandb
 import logging
+
 # Load and preprocess data
 from energy.data import EnergyDataModule
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
@@ -24,13 +25,9 @@ app = typer.Typer()
 run = wandb.init(project="energy_prediction", job_type="training")
 logger = pl.loggers.WandbLogger(project="lightning_energy")
 with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-
-
-
     # Set up logging
     log = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
-
 
     @app.command()
     def train(
@@ -119,5 +116,6 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             cfg = hydra.compose(config_name=cfg_name)
             hydra_main(cfg)
 
+
 if __name__ == "__main__":
-        app()
+    app()
