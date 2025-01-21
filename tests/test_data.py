@@ -29,7 +29,7 @@ def test_preprocess_data_creates_pt_files(tmp_path):
 
     # Create a minimal CSV file with numeric features and target
     csv_content = (
-        "f1,f2,target\n"  # header
+        "f1,f2,Day Ahead Auction (DE-LU)\n"  # header
         "unit1,unit2,unit3\n"  # units row to skip
         "1,2,3\n"
         "4,5,6\n"
@@ -70,7 +70,7 @@ def test_energy_datamodule_setup(tmp_path):
 
     # Create a minimal CSV file
     csv_content = (
-        "f1,f2,target\n"  # header
+        "f1,f2,Day Ahead Auction (DE-LU)\n"  # header
         "unit1,unit2,unit3\n"  # units row
         "1,2,3\n"
         "4,5,6\n"
