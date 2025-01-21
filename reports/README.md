@@ -208,6 +208,12 @@ This process ensures that all required packages are installed and the environmen
 >
 > Answer:
 
+We implemented several rules for code quality and formatting using pre-commit hooks. The configuration includes checks for common issues, such as trailing whitespaces (trailing-whitespace), end-of-file newline consistency (end-of-file-fixer), YAML file syntax validation (check-yaml), large file additions (check-added-large-files), JSON validation (check-json), and detecting unresolved merge conflicts (check-merge-conflict).
+
+For linting and formatting, we employed ruff, which is both a linter and formatter, ensuring compliance with Python’s best practices and maintaining consistent code style across the project.
+
+These tools enhance maintainability and readability, especially in larger projects, by catching issues early and enforcing a uniform structure. Typing and documentation, while not explicitly configured in this file, are also essential as they improve developer understanding, reduce onboarding time, and minimize errors. For example, type hints clarify function expectations, while good documentation ensures clarity on how components interact. 
+
 --- question 6 fill here ---
 
 ## Version control
@@ -227,7 +233,18 @@ This process ensures that all required packages are installed and the environmen
 >
 > Answer:
 
---- question 7 fill here ---
+In total, we implemented 10 tests across various modules. These tests focus on the following areas:
+	1.	Model testing:
+	•	Ensure the model produces outputs of the correct shape (test_model).
+	•	Verify correctness of training, validation, and testing steps, including loss computation and backpropagation.
+	2.	Data testing:
+	•	Validate the preprocessing pipeline, checking for the creation of necessary .pt files.
+	•	Ensure proper loading of energy datasets and integrity of data shapes.
+	•	Test data module setup, verifying batch generation and feature-target alignment.
+	3.	Performance testing:
+	•	Confirm the model’s ability to process 100 predictions within a given time limit.
+
+These tests ensure that core components like data preprocessing, model training, and performance adhere to expected functionality, which is critical for larger projects where errors in one part can propagate and cause significant delays.
 
 ### Question 8
 
@@ -257,7 +274,11 @@ This process ensures that all required packages are installed and the environmen
 >
 > Answer:
 
---- question 9 fill here ---
+Yes, we utilized branches and pull requests in our workflow to enhance collaboration and maintain code quality. Direct pushes to the main branch were disabled, ensuring that all changes required a pull request for integration. This enforced a review process, improving oversight and reducing errors.
+
+We also implemented a CI workflow using GitHub Actions. Each pull request triggered automatic tests on multiple operating systems and Python versions. This ensured that code changes were thoroughly validated before merging into the main branch.
+
+For feature development, we created individual branches for each feature or task. After implementing a feature, we merged the latest changes from the feautre branch into the main branch. This practice allowed us to resolve potential merge conflicts early, keeping the main branch clean and stable. By using this structured approach, we streamlined collaboration, tracked individual contributions, and maintained high-quality code throughout the project lifecycle.
 
 ### Question 10
 
