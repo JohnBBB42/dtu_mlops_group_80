@@ -33,4 +33,5 @@ omit = ["tests/*"]
 
 [project.scripts]
 preprocess_data = "energy.data:main"
-train = "energy.train:main"
+train = "energy.train:app"
+evaluate = "energy.evaluate:app"

@@ -8,7 +8,6 @@ import torch
 import numpy as np
 from omegaconf import OmegaConf
 from energy.model import NeuralNetwork
-from energy.evaluate import evaluate_neural_network
 import wandb
 import logging
 
@@ -79,24 +78,6 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
 
             config_file_path = Path.cwd() / "config.yaml"
             OmegaConf.save(cfg, config_file_path)
-
-            trainer.test(model, datamodule=data_module)
-
-            log.info("Evaluating Complex Model...")
-
-            data_module.setup("test")
-            test_dataset = data_module.test_dataset
-
-            # Build X_test, y_test as numpy arrays
-            X_list, y_list = [], []
-            for features, target in test_dataset:
-                X_list.append(features.numpy())  # convert from tensor to numpy
-                y_list.append(target.numpy())
-
-            X_test = np.array(X_list, dtype=np.float32)
-            y_test = np.array(y_list, dtype=np.float32)
-
-            evaluate_neural_network(model, X_test, y_test)
 
             log.info(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
             # logger.experiment.log({"profiler": prof.key_averages().table(sort_by="cpu_time_total").to_json()})
