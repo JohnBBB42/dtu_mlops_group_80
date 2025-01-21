@@ -14,3 +14,5 @@ invoke==2.2.0
 omegaconf==2.3.0
 pandas==2.2.3
 python-dotenv==1.0.1
+numpy < 2.0.0
+gcloud==0.18.3
