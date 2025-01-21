@@ -88,6 +88,7 @@ class EnergyDataModule(pl.LightningDataModule):
         super().__init__()
         self.data_dir = data_dir
         self.batch_size = batch_size
+        self.n_workers = 11
 
     def setup(self, stage=None):
         """Load datasets for training and testing."""
