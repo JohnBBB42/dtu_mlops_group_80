@@ -15,5 +15,5 @@ model.to_onnx(
     input_sample=dummy_input,
     input_names=["input"],
     output_names=["output"],
-    dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}
+    dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}},
 )
