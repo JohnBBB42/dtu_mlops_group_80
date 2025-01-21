@@ -1,0 +1,19 @@
+{
+  "os": "Windows-10-10.0.26100-SP0",
+  "python": "CPython 3.11.1",
+  "startedAt": "2025-01-20T14:55:53.853737Z",
+  "args": [
+    "--0.001"
+  ],
+  "program": "C:\\Users\\janle\\Desktop\\Master_local\\4\\dtu_mlops_group_80\\src\\energy\\train.py",
+  "codePath": "src\\energy\\train.py",
+  "git": {
+    "remote": "https://github.com/JohnBBB42/dtu_mlops_group_80.git",
+    "commit": "318207160f27ea49a601aa01c13cec767b5d7934"
+  },
+  "email": "jan.leisbrock@web.de",
+  "root": "C:\\Users\\janle\\Desktop\\Master_local\\4\\dtu_mlops_group_80",
+  "host": "Hoffnung",
+  "executable": "C:\\Users\\janle\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "codePathLocal": "src\\energy\\train.py"
+}

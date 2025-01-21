@@ -1,0 +1,40 @@
+{
+  "os": "Windows-10-10.0.26100-SP0",
+  "python": "CPython 3.11.11",
+  "startedAt": "2025-01-21T12:28:07.871448Z",
+  "program": "<python with no main file>",
+  "git": {
+    "remote": "https://github.com/JohnBBB42/dtu_mlops_group_80.git",
+    "commit": "fb940a3a4e2a8ad99139b73114fb11e3c2b04847"
+  },
+  "email": "jan.leisbrock@web.de",
+  "root": "C:\\Users\\janle\\Desktop\\Master_local\\4\\dtu_mlops_group_80",
+  "host": "Hoffnung",
+  "executable": "C:\\Users\\janle\\anaconda3\\envs\\ML_ops\\python.exe",
+  "cpu_count": 10,
+  "cpu_count_logical": 12,
+  "gpu": "NVIDIA GeForce MX550",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "510870417408",
+      "used": "362127638528"
+    }
+  },
+  "memory": {
+    "total": "16831815680"
+  },
+  "cpu": {
+    "count": 10,
+    "countLogical": 12
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce MX550",
+      "memoryTotal": "2147483648",
+      "cudaCores": 1024,
+      "architecture": "Turing"
+    }
+  ],
+  "cudaVersion": "12.6"
+}
