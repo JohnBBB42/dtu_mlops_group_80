@@ -84,7 +84,14 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             log.info("Training complete!")
 
             # Save Model
-            torch.save(model.state_dict(), config_file_path + "model.pth")
+            # Define the models directory relative to current working directory
+            models_dir = Path.cwd() / "models"
+            models_dir.mkdir(exist_ok=True)  # Create the directory if it doesn't exist
+
+            # Define the full path to save the model inside the models directory
+            model_save_path = models_dir / "model.pth"
+
+            torch.save(model.state_dict(), model_save_path)
             artifact = wandb.Artifact(name="example_artifact", type="model")
             artifact.add_file("model.pth")
             run.log_artifact(artifact)
