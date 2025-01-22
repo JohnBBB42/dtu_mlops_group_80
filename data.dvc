@@ -1,6 +1,88 @@
 outs:
-- md5: 44550336ab6c0441355cf0bca916f9e1.dir
-  size: 61529178
-  nfiles: 12
-  hash: md5
+- hash: md5
   path: data
+  files:
+  - relpath: processed/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      remote_storage:
+        etag: 08e8fca78baa898b031001
+        version_id: '1737548907544168'
+  - relpath: processed/processed_data.csv
+    md5: 92ac8a83a22dea9fb83e75313919977c
+    size: 24867301
+    cloud:
+      remote_storage:
+        etag: 08bdcde58eaa898b031001
+        version_id: '1737548914845373'
+  - relpath: processed/test_features.pt
+    md5: 2fa169aceeda094a6b5181d79e412387
+    size: 2386554
+    cloud:
+      remote_storage:
+        etag: 08cdd9fc8caa898b031001
+        version_id: '1737548911029453'
+  - relpath: processed/test_targets.pt
+    md5: e8263783c6f99da1c797534e6348afa2
+    size: 141493
+    cloud:
+      remote_storage:
+        etag: 08fde3ac8caa898b031001
+        version_id: '1737548909720061'
+  - relpath: processed/train_features.pt
+    md5: 3c2e0b9d4dbf77ab630d48a15b42d258
+    size: 9542463
+    cloud:
+      remote_storage:
+        etag: 08fed1988faa898b031001
+        version_id: '1737548915681534'
+  - relpath: processed/train_targets.pt
+    md5: 2a0c6ed3f5b8117c9430866adcbeafd7
+    size: 562426
+    cloud:
+      remote_storage:
+        etag: 08cbfac18caa898b031001
+        version_id: '1737548910067019'
+  - relpath: raw/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      remote_storage:
+        etag: 08e6bda18caa898b031001
+        version_id: '1737548909534950'
+  - relpath: raw/energy-charts_Public_net_electricity_generation_in_Germany_in_2020.csv
+    md5: c791a6e3733e9ffab8306fb60d5ae81b
+    size: 4859714
+    cloud:
+      remote_storage:
+        etag: 08d1d0b98daa898b031001
+        version_id: '1737548912027729'
+  - relpath: raw/energy-charts_Public_net_electricity_generation_in_Germany_in_2021.csv
+    md5: c67f3c789a502eec8b28fcdca5e38a3b
+    size: 4844654
+    cloud:
+      remote_storage:
+        etag: 08a98e8b8daa898b031001
+        version_id: '1737548911265577'
+  - relpath: raw/energy-charts_Public_net_electricity_generation_in_Germany_in_2022.csv
+    md5: f02e26e32d2ce8da0e98a58c29b8805c
+    size: 4906219
+    cloud:
+      remote_storage:
+        etag: 08bd9fa58eaa898b031001
+        version_id: '1737548913790909'
+  - relpath: raw/energy-charts_Public_net_electricity_generation_in_Germany_in_2023.csv
+    md5: 6d0c70bc73631b9b9b649502cc915838
+    size: 4719371
+    cloud:
+      remote_storage:
+        etag: 08da8ca08daa898b031001
+        version_id: '1737548911609434'
+  - relpath: raw/energy-charts_Public_net_electricity_generation_in_Germany_in_2024.csv
+    md5: 59148e08823f404a5e97ce252ac66e55
+    size: 4698983
+    cloud:
+      remote_storage:
+        etag: 08f9bba18eaa898b031001
+        version_id: '1737548913729017'
