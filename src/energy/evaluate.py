@@ -3,7 +3,6 @@ import typer
 import hydra
 import torch
 import numpy as np
-import logging
 from pathlib import Path
 from omegaconf import OmegaConf, DictConfig
 from sklearn.metrics import mean_squared_error, r2_score

@@ -27,7 +27,8 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
     target_column_name = "Day Ahead Auction (DE-LU)"
 
     # Separate features and target: assume last column is target
-    features_df = merged_df.iloc[:, 1:-2]
+    temp_features_df = merged_df.drop(columns=[target_column_name])
+    features_df = temp_features_df.iloc[:, :-1]
     target_series = merged_df[target_column_name]
 
     # Select only numeric columns for features
@@ -41,8 +42,8 @@ def main(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> No
     combined = combined.dropna(subset=["target"])
 
     # Fill any remaining NaN values in features
-    combined.fillna(method="ffill", inplace=True)
-    combined.fillna(method="bfill", inplace=True)
+    combined.ffill(inplace=True)
+    combined.bfill(inplace=True)
 
     if combined.empty:
         raise ValueError("No valid numeric data after preprocessing. Check your raw data and conversion steps.")

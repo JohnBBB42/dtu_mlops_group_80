@@ -5,11 +5,8 @@ from pathlib import Path
 import hydra
 from omegaconf import DictConfig, OmegaConf
 import torch
-import numpy as np
-from omegaconf import OmegaConf
 from energy.model import NeuralNetwork
 import wandb
-import logging
 
 # Load and preprocess data
 from energy.data import EnergyDataModule

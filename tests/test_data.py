@@ -1,5 +1,6 @@
 import pytest
 import torch
+import numpy as np
 import pandas as pd
 from energy.data import main as preprocess_main, load_energy_data, EnergyDataModule
 
@@ -78,9 +79,12 @@ def test_energy_datamodule_setup(tmp_path):
     dummy_csv = raw_dir / "dummy.csv"
     dummy_csv.write_text(csv_content)
 
-    # Read CSV to determine feature count dynamically
+    # Read CSV and compute feature_count based on new target selection logic
     df = pd.read_csv(dummy_csv, skiprows=[1])
-    feature_count = df.shape[1] - 1  # subtract target column
+    target_column_name = "Day Ahead Auction (DE-LU)"
+    # Drop the target column and count remaining features
+    features_df = df.drop(columns=[target_column_name]).iloc[:, :-1]
+    feature_count = features_df.select_dtypes(include=[np.number]).shape[1]
 
     # Preprocess data to create .pt files in our temporary processed_dir
     preprocess_main(raw_dir=str(raw_dir), processed_dir=str(processed_dir))

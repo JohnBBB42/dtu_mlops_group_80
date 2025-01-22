@@ -1,8 +1,4 @@
 import torch
-import torchvision
-import pytorch_lightning as pl
-import onnx
-import onnxruntime
 from energy.model import NeuralNetwork
 
 input_size = 10
