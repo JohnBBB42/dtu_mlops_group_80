@@ -1,0 +1,64 @@
+name: Model Artifact Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  check-model-artifacts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip setuptools wheel
+          pip install wandb
+
+      - name: Check for new model artifacts
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          WANDB_ENTITY: ${{ secrets.WANDB_ENTITY }}
+          WANDB_PROJECT: ${{ secrets.WANDB_PROJECT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<EOF
+          import os
+          import wandb
+          from github import Github
+
+          # Initialize wandb API
+          api = wandb.Api()
+
+          # Get the list of artifacts
+          artifacts = api.artifacts(type='model', project=os.getenv('WANDB_PROJECT'))
+
+          # Initialize GitHub API
+          g = Github(os.getenv('GITHUB_TOKEN'))
+          repo = g.get_repo(os.getenv('GITHUB_REPOSITORY'))
+
+          # Check for new or updated artifacts
+          for artifact in artifacts:
+              if artifact.updated_at > artifact.created_at:
+                  issue_title = f"New Model Artifact: {artifact.name}"
+                  issue_body = f"A new model artifact has been detected.\n\n**Artifact Name:** {artifact.name}\n**Updated At:** {artifact.updated_at}\n\nPlease review the changes."
+                  
+                  # Create a GitHub issue
+                  repo.create_issue(title=issue_title, body=issue_body)
+                  print(f"Issue created for artifact: {artifact.name}")
+          EOF
