@@ -2,6 +2,7 @@ import pytest
 import torch
 import numpy as np
 import pandas as pd
+import os
 from energy.data import main as preprocess_main, load_energy_data, EnergyDataModule
 
 
@@ -119,3 +120,63 @@ def test_energy_datamodule_setup(tmp_path):
             else:
                 assert y.ndim == 1
             break
+
+
+def test_main(tmp_path):
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir()
+    processed_dir = tmp_path / "processed"
+    processed_dir.mkdir()
+
+    # Create a minimal CSV file
+    csv_content = (
+        "f1,f2,Day Ahead Auction (DE-LU)\n"  # header
+        "unit1,unit2,unit3\n"  # units row
+        "1,2,3\n"
+        "4,5,6\n"
+    )
+    dummy_csv = raw_dir / "dummy.csv"
+    dummy_csv.write_text(csv_content)
+
+    preprocess_main(raw_dir=str(raw_dir), processed_dir=str(processed_dir))
+
+    # Check if the processed files are created
+    assert os.path.exists(processed_dir / "train_features.pt")
+    assert os.path.exists(processed_dir / "train_targets.pt")
+    assert os.path.exists(processed_dir / "test_features.pt")
+    assert os.path.exists(processed_dir / "test_targets.pt")
+
+
+def test_load_energy_data(dummy_processed_data):
+    train_dataset, test_dataset = load_energy_data(dummy_processed_data)
+    assert isinstance(train_dataset, torch.utils.data.TensorDataset)
+    assert isinstance(test_dataset, torch.utils.data.TensorDataset)
+
+
+def test_energy_datamodule_setup_test_stage(tmp_path):
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir()
+    processed_dir = tmp_path / "processed"
+    processed_dir.mkdir()
+
+    # Create a minimal CSV file
+    csv_content = (
+        "f1,f2,Day Ahead Auction (DE-LU)\n"  # header
+        "unit1,unit2,unit3\n"  # units row
+        "1,2,3\n"
+        "4,5,6\n"
+    )
+    dummy_csv = raw_dir / "dummy.csv"
+    dummy_csv.write_text(csv_content)
+
+    preprocess_main(raw_dir=str(raw_dir), processed_dir=str(processed_dir))
+
+    dm = EnergyDataModule(data_dir=str(processed_dir), batch_size=2)
+    dm.setup(stage="test")
+
+    test_loader = dm.test_dataloader()
+    for batch in test_loader:
+        x, y = batch
+        assert x.shape[1] == 1  # Number of features
+        assert y.shape[0] == 1  # Batch size
+        break
