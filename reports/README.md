@@ -293,7 +293,9 @@ For feature development, we created individual branches for each feature or task
 >
 > Answer:
 
---- question 10 fill here ---
+We used DVC for data version control in our project. It was particularly convenient for ensuring that all team members were working with the same version of the dataset, eliminating discrepancies and streamlining collaboration. By tracking our data with DVC, we could efficiently share large files via remote storage without overloading our Git repository, while still maintaining version history. This also ensured reproducibility, as previous versions of the data could be easily restored if needed.
+
+However, since our dataset was static and not expected to change during the project, we did not require a highly dynamic version control system for the data. For this reason, we did not track the model itself with DVC, focusing only on the dataset. If we had been working with a frequently updated or evolving dataset, DVC would have been even more beneficial for managing changes and testing how different versions of the data impacted model performance. In such cases, it would also be useful for auditing and debugging pipelines by associating model outputs with specific data versions.
 
 ### Question 11
 
@@ -310,7 +312,13 @@ For feature development, we created individual branches for each feature or task
 >
 > Answer:
 
---- question 11 fill here ---
+We have implemented a comprehensive continuous integration (CI) pipeline that automates testing and ensures the quality of our codebase. The CI setup includes unit testing, parameterized testing, and functionality checks for both data processing and model performance. We use pytest to run these tests and have structured them into two primary test files: test_data.py and test_model.py.
+
+The test_data.py file ensures that our data preprocessing pipeline, data loading, and data module configurations work as expected. It includes tests for verifying the creation of processed files (.pt), dataset loading, and the setup of dataloaders. The test_model.py file focuses on testing the core functionality of our model, including the forward pass, training, validation, and test steps, as well as optimizer configuration. These tests use parameterized inputs to cover various cases (e.g., different batch sizes) for robustness.
+
+Our GitHub Actions workflow runs these tests on Python 3.8 and 3.9 to ensure compatibility across environments. Additionally, we utilize dependency caching for pip packages, which significantly reduces the runtime of our CI pipeline by avoiding redundant installations. While we currently target Linux for the workflow, it can be easily extended to include Windows or macOS if needed.
+
+This automated CI setup ensures that any changes made to the codebase are thoroughly tested before integration, maintaining code quality and functionality.
 
 ## Running code and tracking experiments
 
