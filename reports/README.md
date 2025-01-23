@@ -129,7 +129,7 @@ Group 80
 >
 > Answer:
 
-*232812, s244501, s232811*
+232812, s244501, s232811
 
 ### Question 3
 > **A requirement to the project is that you include a third-party package not covered in the course. What framework**
