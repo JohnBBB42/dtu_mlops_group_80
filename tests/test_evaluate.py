@@ -19,11 +19,8 @@ def test_cli_evaluate(tmp_path):
         patch("energy.evaluate.NeuralNetwork") as mock_nn,
         patch("torch.load"),
     ):
-
         # Configure mocks
-        mock_compose.return_value = DictConfig(
-            {"hyperparameters": {"batch_size": 4, "lr": 0.001}}
-        )
+        mock_compose.return_value = DictConfig({"hyperparameters": {"batch_size": 4, "lr": 0.001}})
 
         mock_dm.return_value.test_dataset = mock_dataset
         mock_dm.return_value.setup = Mock()
