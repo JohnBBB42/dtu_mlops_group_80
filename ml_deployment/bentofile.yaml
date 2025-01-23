@@ -4,16 +4,8 @@ labels:
   project: gallery
 include:
 - 'bentoml_service.py'
-- 'model.onnx'
+- 'optimized_model.onnx'
 python:
   packages:
     - onnxruntime
     - numpy
-
-# Docker version
-#FROM python:3.11-slim
-#WORKDIR /bento
-#COPY bentoml_service.py .
-#COPY resnet18.onnx .
-#RUN pip install onnxruntime numpy bentoml
-#CMD ["bentoml", "serve", "bentoml_service:ImageClassifierService"]
