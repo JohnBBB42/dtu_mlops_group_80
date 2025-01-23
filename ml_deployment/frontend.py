@@ -18,6 +18,7 @@ def get_backend_url():
     name = os.environ.get("BACKEND", None)
     return name
 
+
 def classify_image(image, backend):
     """Send the image to the backend for classification."""
     predict_url = f"{backend}/classify/"
@@ -54,7 +55,7 @@ def main() -> None:
             sorted_probs = sorted(
                 zip([f"Class {i}" for i in range(len(probabilities))], probabilities),
                 key=lambda x: x[1],  # Sort by probability (the second item in the tuple)
-                reverse=True         # Highest probabilities first
+                reverse=True,  # Highest probabilities first
             )
             top_ten = sorted_probs[:10]
 
@@ -72,4 +73,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -35,4 +35,3 @@ class EnergyPricePredictorService:
         # Perform inference in ONNX Runtime
         output = self.model.run(None, {"input": features.astype(np.float32)})
         return output[0]
-
