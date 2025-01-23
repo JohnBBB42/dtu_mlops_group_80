@@ -5,7 +5,7 @@ steps:
     'build',
     '.',
     '-t',
-    'europe-west1-docker.pkg.dev/united-concord-447713-c7/my-container-registry/$_IMAGE_NAME',
+    'europe-west1-docker.pkg.dev/united-concord-447713-c7/container-registry-group-80/$_IMAGE_NAME',
     '-f',
     './dockerfiles/train.dockerfile'
   ]
@@ -13,7 +13,7 @@ steps:
   id: 'Push container image'
   args: [
     'push',
-    'europe-west1-docker.pkg.dev/united-concord-447713-c7/my-container-registry/$_IMAGE_NAME'
+    'europe-west1-docker.pkg.dev/united-concord-447713-c7/container-registry-group-80/$_IMAGE_NAME'
   ]
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'Deploy to Cloud Run'
@@ -22,7 +22,7 @@ steps:
     'deploy',
     'simple-fastapi-app',
     '--image',
-    'europe-west1-docker.pkg.dev/united-concord-447713-c7/my-container-registry/$_IMAGE_NAME',
+    'europe-west1-docker.pkg.dev/united-concord-447713-c7/container-registry-group-80/$_IMAGE_NAME',
     '--region',
     'europe-west1',
     '--platform',
