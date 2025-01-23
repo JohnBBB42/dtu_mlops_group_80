@@ -19,3 +19,6 @@ mkdocstrings-python>=1.12.2
 # report
 loguru==0.7.3
 markdown==3.7.0
+
+# bandit
+bandit==1.7.4
