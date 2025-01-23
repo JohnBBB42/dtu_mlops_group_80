@@ -234,16 +234,12 @@ These tools enhance maintainability and readability, especially in larger projec
 >
 > Answer:
 
-In total, we implemented 12 tests across various modules. These tests focus on the following areas:
-	1.	Model testing:
-	•	Ensure the model produces outputs of the correct shape (test_model).
-	•	Verify correctness of training, validation, and testing steps, including loss computation and backpropagation.
-	2.	Data testing:
-	•	Validate the preprocessing pipeline, checking for the creation of necessary .pt files.
-	•	Ensure proper loading of energy datasets and integrity of data shapes.
-	•	Test data module setup, verifying batch generation and feature-target alignment.
+We implemented 12 tests across key modules: 
 
-These tests ensure that core components like data preprocessing and model training adhere to expected functionality, which is critical for larger projects where errors in one part can propagate and cause significant delays.
+1. **Model Testing**: Verifies output shapes, correctness of training, validation, and testing steps, including loss computation and backpropagation.
+2. **Data Testing**: Validates preprocessing (creation of `.pt` files), dataset loading, data integrity, and batch generation in the data module.
+
+These tests ensure core components like preprocessing and model training function as expected, preventing errors from propagating and causing delays in larger projects.
 
 ### Question 8
 
@@ -312,13 +308,18 @@ However, since our dataset was static and not expected to change during the proj
 >
 > Answer:
 
-We have implemented a comprehensive continuous integration (CI) pipeline that automates testing and ensures the quality of our codebase. The CI setup includes unit testing, parameterized testing, and functionality checks for both data processing and model performance. We use pytest to run these tests and have structured them into two primary test files: test_data.py and test_model.py.
+We have organized our continuous integration (CI) pipeline into three separate workflows: **Code Formatting**, **Pre-commit Checks**, and **Unit Tests**. These workflows are implemented in GitHub Actions to ensure code quality, adherence to coding standards, and functionality.
 
-The test_data.py file ensures that our data preprocessing pipeline, data loading, and data module configurations work as expected. It includes tests for verifying the creation of processed files (.pt), dataset loading, and the setup of dataloaders. The test_model.py file focuses on testing the core functionality of our model, including the forward pass, training, validation, and test steps, as well as optimizer configuration. These tests use parameterized inputs to cover various cases (e.g., different batch sizes) for robustness.
+1. **Code Formatting**:
+   - The `codecheck.yaml` workflow ensures code quality by running tools like `Ruff` for linting and formatting and `Mypy` for type checking. It is triggered on every push or pull request to the `main` branch and runs on multiple operating systems (Ubuntu, Windows, macOS) and Python versions (3.11 and 3.12). This workflow also uses pip caching to reduce runtime.
 
-Our GitHub Actions workflow runs these tests on Python 3.8 and 3.9 to ensure compatibility across environments. Additionally, we utilize dependency caching for pip packages, which significantly reduces the runtime of our CI pipeline by avoiding redundant installations. While we currently target Linux for the workflow, it can be easily extended to include Windows or macOS if needed.
+2. **Pre-commit Checks**:
+   - The `pre_commit.yaml` workflow ensures that commits adhere to coding standards enforced by pre-commit hooks. It fetches the latest changes, runs the hooks, and automatically commits fixes if necessary. Like the Code Formatting workflow, it tests on multiple operating systems and Python versions to ensure compatibility.
 
-This automated CI setup ensures that any changes made to the codebase are thoroughly tested before integration, maintaining code quality and functionality.
+3. **Unit Testing**:
+   - The `tests.yaml` workflow runs our unit tests using `pytest` with coverage tracking. It validates the functionality of the data pipeline and model, as seen in `test_data.py` and `test_model.py`. This workflow is also configured to run on Ubuntu, Windows, and macOS with Python 3.11 and 3.12. It leverages dependency caching and provides detailed coverage reports.
+
+By separating these workflows, we ensure modular and efficient CI processes. Testing on multiple OS platforms and Python versions guarantees compatibility across diverse environments. Pip caching further optimizes the runtime of all workflows. This setup provides confidence that our code is high quality and maintains functionality during development. An example workflow file can be found [here](https://github.com/<your-repository>/actions/workflows/tests.yaml).
 
 ## Running code and tracking experiments
 
@@ -337,7 +338,13 @@ This automated CI setup ensures that any changes made to the codebase are thorou
 >
 > Answer:
 
---- question 12 fill here ---
+We configured our experiments using a combination of Hydra configuration files and command-line arguments with `Typer`. This allows us to set default hyperparameters in a `config.yaml` file while also enabling overrides via CLI options. For example, we can run an experiment with:
+
+```bash
+python train.py --lr 0.001 --batch_size 32 --epochs 50
+```
+
+The configuration combines CLI arguments with values from `config.yaml` to ensure flexibility and reproducibility. Additionally, we use tools like PyTorch Lightning for training and WandB for logging, which integrates seamlessly with our setup.
 
 ### Question 13
 
@@ -352,7 +359,9 @@ This automated CI setup ensures that any changes made to the codebase are thorou
 >
 > Answer:
 
---- question 13 fill here ---
+We ensured reproducibility of experiments by using a combination of configuration files, tracking tools, and structured workflows. Experiments were managed with a `config.yaml` file that stores hyperparameters and settings, which can be reused to recreate runs. We tracked every experiment with Weights & Biases (WandB), logging configurations, results, and metadata, such as the code version, system environment, and dataset used (e.g., details in `wandb-metadata.json` and `wandb-summary.json`).
+
+The exact Python environment and dependencies were recorded in `requirements.txt`, ensuring that experiments can be reproduced in identical environments. To replicate any experiment, one simply needs to load the logged configuration in WandB or run the `train.py` script with the stored config file.
 
 ### Question 14
 
@@ -369,7 +378,26 @@ This automated CI setup ensures that any changes made to the codebase are thorou
 >
 > Answer:
 
---- question 14 fill here ---
+In our experiments, we tracked critical metrics and hyperparameters using WandB. The first screenshot shows the **hyperparameter_tuning** for different hyperparameter sweeps, such as learning rate (`lr`), batch size, and epochs. Validation loss is crucial as it measures model performance on unseen data, guiding us in selecting the best hyperparameters. Notably, the plot reveals signs of overfitting in certain sweeps where validation loss increases sharply after an initial stable phase. This highlights the importance of early stopping and regularization in our training process to prevent overfitting.
+
+```markdown
+![my_image](figures/validation_loss.png)
+```
+
+The second screenshot illustrates the **importance and correlation of hyperparameters** with validation loss. Batch size emerged as the most influential parameter, showing a strong negative correlation with loss, meaning smaller batch sizes likely resulted in better validation performance. Such insights help refine our experiments by focusing on impactful hyperparameters while deprioritizing less critical ones. This analysis was essential in efficiently navigating the parameter space.
+
+```markdown
+![my_image](figures/hyperparameter_importance.png)
+```
+
+The third screenshot depicts a **parallel coordinate plot** of hyperparameter combinations and their corresponding validation loss. This visualization reveals how specific configurations (e.g., lower batch sizes paired with moderate learning rates) lead to improved performance, while certain combinations show suboptimal results. These observations enabled better decision-making during hyperparameter optimization by clearly visualizing the trade-offs and relationships between parameters.
+
+```markdown
+![my_image](figures/hyperparameter_tuning.png)
+```
+
+These metrics and visualizations were vital in understanding the effects of different configurations on model performance, ensuring we identified the best-performing setup. Tracking these allowed us to iteratively improve the model, address overfitting issues, and maintain experiment reproducibility with a clear audit trail of parameter choices and their outcomes.
+
 
 ### Question 15
 
@@ -399,7 +427,9 @@ This automated CI setup ensures that any changes made to the codebase are thorou
 >
 > Answer:
 
---- question 16 fill here ---
+Debugging in our project primarily still relied on a combination of **print statements**, **GenAI tools**, and the course material. Print statements were quick and effective for identifying issues, especially in smaller functions or during initial testing phases. GenAI tools, such as ChatGPT, provided additional insights and suggestions, helping us resolve more complex issues efficiently. The course material and slack also served as a reliable reference for debugging common errors related to the frameworks and tools we used.
+
+We performed a single profiling run using PyTorch’s built-in profiler to evaluate the efficiency of key components, such as the data pipeline and model training loops. This profiling helped identify a few bottlenecks, such as unnecessary data loading redundancies, which were then optimized. While the code is now functional and performs well, we believe further profiling could reveal additional opportunities for fine-tuning performance. Debugging and profiling were critical in ensuring our experiments ran smoothly and efficiently.
 
 ## Working in the cloud
 
@@ -602,7 +632,20 @@ This automated CI setup ensures that any changes made to the codebase are thorou
 >
 > Answer:
 
---- question 30 fill here ---
+
+The biggest challenge in the project was the sheer number of new software tools we had to learn and use, which often felt overwhelming. At times, multiple solutions were proposed for the same issue, making it difficult to decide on the best approach.
+
+Despite these struggles, the course provided an invaluable opportunity to learn and adapt. To overcome challenges, we relied on the course material, collaborated closely as a group, and used GenAI tools like ChatGPT for guidance. Breaking tasks into smaller, manageable pieces and focusing on practical solutions helped us push through moments of confusion.
+
+To build on this experience, it would be beneficial to integrate these concepts into Business Analytics classes across the program. For instance, rather than relying heavily on Jupyter notebooks in analytics courses, the setup provided by this course, such as Nicki’s MLOps template, could be used as the foundation.
+
+A potential integration could involve splitting the focus across multiple classes. The first class could focus on coding structure, reproducibility, and version control, introducing students to tools like Git, DVC, and configuration management using Hydra. Students would learn how to structure projects for long-term scalability, manage data versioning, and ensure experiments can be reproduced.
+
+The second class could emphasize experiment tracking and optimization with tools like WandB. Students would learn to log metrics, perform hyperparameter sweeps, and analyze results effectively, which are crucial for iteratively improving machine learning models.
+
+Finally, a third class could delve into cloud deployment and applications, focusing on tools like Docker, Kubernetes, and cloud platforms (e.g., AWS, GCP, or Azure). This would teach students how to deploy models in production environments and scale machine learning workflows effectively.
+
+By integrating these components into the Business Analytics curriculum, students would gain a gradual and well-rounded understanding of MLOps, reducing the steep learning curve while reinforcing these critical concepts through hands-on practice.
 
 ### Question 31
 
