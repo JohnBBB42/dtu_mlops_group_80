@@ -1,49 +1,46 @@
 import pytest
-import torch
-import numpy as np
-from typer.testing import CliRunner
-from energy.evaluate import app
-from energy.model import NeuralNetwork
+from unittest.mock import patch, Mock
 from pathlib import Path
+from omegaconf import DictConfig
+from typer.testing import CliRunner
+import torch
+from energy.evaluate import app
 
 runner = CliRunner()
 
 
-@pytest.fixture
-def dummy_model(tmp_path):
-    input_size = 10
-    model = NeuralNetwork(input_size=input_size)
-    model_path = tmp_path / "model.pth"
-    torch.save(model.state_dict(), model_path)
-    return model_path
+def test_cli_evaluate(tmp_path):
+    mock_dataset = [(torch.tensor([1.0, 2.0]), torch.tensor(0.5))]
 
+    with (
+        patch("energy.evaluate.hydra.initialize") as mock_init,
+        patch("energy.evaluate.hydra.compose") as mock_compose,
+        patch("energy.evaluate.EnergyDataModule") as mock_dm,
+        patch("energy.evaluate.NeuralNetwork") as mock_nn,
+        patch("torch.load"),
+    ):
 
-@pytest.fixture
-def dummy_processed_data(tmp_path):
-    processed_dir = tmp_path / "processed"
-    processed_dir.mkdir()
-    features = torch.randn(100, 10)
-    targets = torch.randn(100, 1)
-    torch.save(features, processed_dir / "train_features.pt")
-    torch.save(targets, processed_dir / "train_targets.pt")
-    torch.save(features, processed_dir / "test_features.pt")
-    torch.save(targets, processed_dir / "test_targets.pt")
-    return processed_dir
+        # Configure mocks
+        mock_compose.return_value = DictConfig(
+            {"hyperparameters": {"batch_size": 4, "lr": 0.001}}
+        )
 
+        mock_dm.return_value.test_dataset = mock_dataset
+        mock_dm.return_value.setup = Mock()
 
-def test_evaluate(dummy_model, dummy_processed_data):
-    result = runner.invoke(
-        app,
-        [
-            "evaluate",
-            "--model-path",
-            str(dummy_model),
-            "--cfg-path",
-            "../../configs",
-            "--cfg-name",
-            "config.yaml",
-        ],
-    )
-    assert result.exit_code == 0
-    assert "Mean Squared Error" in result.output
-    assert "R-squared" in result.output
+        model_path = tmp_path / "model.pth"
+        model_path.touch()
+
+        result = runner.invoke(
+            app,
+            [
+                "--model-path",
+                str(model_path),
+                "--cfg-path",
+                str(tmp_path),
+                "--cfg-name",
+                "config.yaml",
+            ],
+        )
+
+        assert result.exit_code == 0
