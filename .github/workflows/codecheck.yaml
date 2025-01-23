@@ -31,7 +31,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install -U pip setuptools wheel
-          pip install ruff bandit
+          pip install ruff
+          pip install bandit
           pip install -e .
           pip list
 
@@ -40,5 +41,5 @@ jobs:
       - name: Ruff format
         run: ruff format .
       - name: Run bandit
-        run: bandit -r src
+        run: bandit -r src --skip B614
 

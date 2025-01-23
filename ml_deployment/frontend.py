@@ -1,4 +1,6 @@
+# frontend.py
 import os
+import numpy as np
 
 import pandas as pd
 import requests
@@ -13,62 +15,67 @@ def get_backend_url():
     client = run_v2.ServicesClient()
     services = client.list_services(parent=parent)
     for service in services:
-        if service.name.split("/")[-1] == "backend":
+        if service.name.split("/")[-1] == "bentoml_service":
             return service.uri
     name = os.environ.get("BACKEND", None)
     return name
 
 
-def classify_image(image, backend):
-    """Send the image to the backend for classification."""
-    predict_url = f"{backend}/classify/"
-    response = requests.post(predict_url, files={"file": image}, timeout=42)
-    if response.status_code == 200:
+def predict_energy_price(features, backend):
+    """Send the features to the backend for prediction."""
+    predict_url = f"{backend}/predict"
+    payload = {"features": features.tolist()}
+    try:
+        response = requests.post(predict_url, json=payload, timeout=42)
+        response.raise_for_status()
         return response.json()
-    return None
+    except requests.exceptions.RequestException as e:
+        st.error(f"Request failed: {e}")
+        return None
 
 
 def main() -> None:
     """Main function of the Streamlit frontend."""
     backend = get_backend_url()
     if backend is None:
-        msg = "Backend service not found"
-        raise ValueError(msg)
+        st.error("Backend service not found")
+        return
 
-    st.title("Image Classification")
+    st.title("Energy Price Predictor")
 
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    st.write("Enter the input features for energy price prediction:")
 
-    if uploaded_file is not None:
-        image = uploaded_file.read()
-        result = classify_image(image, backend=backend)
+    # Define your actual feature names here
+    feature_names = [
+        "Feature 1",
+        "Feature 2",
+        "Feature 3",
+        "Feature 4",
+        "Feature 5",
+        "Feature 6",
+        "Feature 7",
+        "Feature 8",
+        "Feature 9",
+        "Feature 10",
+    ]
 
-        if result is not None:
+    features = []
+    for name in feature_names:
+        value = st.number_input(f"{name}", value=0.0, format="%.4f")
+        features.append(value)
+
+    if st.button("Predict"):
+        if len(features) != 10:
+            st.error("Please enter all 10 features.")
+            return
+
+        result = predict_energy_price(np.array(features), backend=backend)
+
+        if result is not None and "prediction" in result:
             prediction = result["prediction"]
-            probabilities = result["probabilities"]
-
-            # show the image and prediction
-            st.image(image, caption="Uploaded Image")
-            st.write("Prediction:", prediction)
-
-            # Sort probabilities and take the top 10
-            sorted_probs = sorted(
-                zip([f"Class {i}" for i in range(len(probabilities))], probabilities),
-                key=lambda x: x[1],  # Sort by probability (the second item in the tuple)
-                reverse=True,  # Highest probabilities first
-            )
-            top_ten = sorted_probs[:10]
-
-            # Split the sorted top 10 into separate lists for DataFrame
-            classes, probs = zip(*top_ten)
-
-            # Create a bar chart
-            data = {"Class": classes, "Probability": probs}
-            df = pd.DataFrame(data)
-            df.set_index("Class", inplace=True)
-            st.bar_chart(df, y="Probability")
+            st.success(f"Predicted Energy Price: {prediction[0]:.2f}")
         else:
-            st.write("Failed to get prediction")
+            st.error("Failed to get prediction")
 
 
 if __name__ == "__main__":
