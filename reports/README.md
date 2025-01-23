@@ -234,7 +234,7 @@ These tools enhance maintainability and readability, especially in larger projec
 >
 > Answer:
 
-In total, we implemented 10 tests across various modules. These tests focus on the following areas:
+In total, we implemented 12 tests across various modules. These tests focus on the following areas:
 	1.	Model testing:
 	•	Ensure the model produces outputs of the correct shape (test_model).
 	•	Verify correctness of training, validation, and testing steps, including loss computation and backpropagation.
@@ -242,10 +242,8 @@ In total, we implemented 10 tests across various modules. These tests focus on t
 	•	Validate the preprocessing pipeline, checking for the creation of necessary .pt files.
 	•	Ensure proper loading of energy datasets and integrity of data shapes.
 	•	Test data module setup, verifying batch generation and feature-target alignment.
-	3.	Performance testing:
-	•	Confirm the model’s ability to process 100 predictions within a given time limit.
 
-These tests ensure that core components like data preprocessing, model training, and performance adhere to expected functionality, which is critical for larger projects where errors in one part can propagate and cause significant delays.
+These tests ensure that core components like data preprocessing and model training adhere to expected functionality, which is critical for larger projects where errors in one part can propagate and cause significant delays.
 
 ### Question 8
 
