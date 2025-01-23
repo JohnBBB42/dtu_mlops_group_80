@@ -147,7 +147,7 @@ def test_main(tmp_path):
     assert os.path.exists(processed_dir / "test_targets.pt")
 
 
-#def test_load_energy_data(dummy_processed_data):
+# def test_load_energy_data(dummy_processed_data):
 #    train_dataset, test_dataset = load_energy_data(dummy_processed_data)
 #    assert isinstance(train_dataset, torch.utils.data.TensorDataset)
 #    assert isinstance(test_dataset, torch.utils.data.TensorDataset)
