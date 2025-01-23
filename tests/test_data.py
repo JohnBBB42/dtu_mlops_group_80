@@ -121,6 +121,7 @@ def test_energy_datamodule_setup(tmp_path):
                 assert y.ndim == 1
             break
 
+
 def test_main(tmp_path):
     raw_dir = tmp_path / "raw"
     raw_dir.mkdir()
@@ -176,6 +177,6 @@ def test_energy_datamodule_setup_test_stage(tmp_path):
     test_loader = dm.test_dataloader()
     for batch in test_loader:
         x, y = batch
-        assert x.shape[1] == 1 # Number of features
+        assert x.shape[1] == 1  # Number of features
         assert y.shape[0] == 1  # Batch size
         break

@@ -93,7 +93,7 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
 
             torch.save(model.state_dict(), model_save_path)
             artifact = wandb.Artifact(name="example_artifact", type="model")
-            artifact.add_file("model.pth")
+            artifact.add_file(model_save_path)
             run.log_artifact(artifact)
 
         # Hydra setup: Avoid parsing `typer` arguments
