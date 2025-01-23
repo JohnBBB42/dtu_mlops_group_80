@@ -7,6 +7,7 @@ import requests
 import streamlit as st
 from google.cloud import run_v2
 
+
 @st.cache_resource
 def get_backend_url():
     """Get the URL of the backend service."""
@@ -19,6 +20,7 @@ def get_backend_url():
     name = os.environ.get("BACKEND", None)
     return name
 
+
 def predict_energy_price(features, backend):
     """Send the features to the backend for prediction."""
     predict_url = f"{backend}/predict"
@@ -30,6 +32,7 @@ def predict_energy_price(features, backend):
     except requests.exceptions.RequestException as e:
         st.error(f"Request failed: {e}")
         return None
+
 
 def main() -> None:
     """Main function of the Streamlit frontend."""
@@ -53,9 +56,9 @@ def main() -> None:
         "Feature 7",
         "Feature 8",
         "Feature 9",
-        "Feature 10"
+        "Feature 10",
     ]
-    
+
     features = []
     for name in feature_names:
         value = st.number_input(f"{name}", value=0.0, format="%.4f")
@@ -73,6 +76,7 @@ def main() -> None:
             st.success(f"Predicted Energy Price: {prediction[0]:.2f}")
         else:
             st.error("Failed to get prediction")
+
 
 if __name__ == "__main__":
     main()
