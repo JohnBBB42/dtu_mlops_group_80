@@ -35,8 +35,7 @@ jobs:
       - name: Check data changes
         id: check
         run: |
-          dvc pull
-          dvc status
+          dvc status -r remote_storage
           if [ $? -ne 0 ]; then
             echo "data_changed=true" >> $GITHUB_OUTPUT
           else
