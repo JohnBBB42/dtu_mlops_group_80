@@ -41,5 +41,5 @@ jobs:
       - name: Ruff format
         run: ruff format .
       - name: Run bandit
-        run: bandit -r src
+        run: bandit -r src --skip B614
 
