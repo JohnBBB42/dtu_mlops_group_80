@@ -22,7 +22,7 @@ def test_training_step():
     model.log = lambda *args, **kwargs: None
     # Create a dummy batch of inputs and regression targets
     images = torch.randn(4, input_size)
-    targets = torch.randn(4, 1)  # Targets for regression
+    targets = torch.randn(4)  # Targets for regression
     batch = (images, targets)
 
     loss = model.training_step(batch, batch_idx=0)
@@ -35,7 +35,7 @@ def test_validation_step():
     model = NeuralNetwork(input_size=input_size)
     model.log = lambda *args, **kwargs: None
     images = torch.randn(4, input_size)
-    targets = torch.randn(4, 1)
+    targets = torch.randn(4)  # Targets for regression
     batch = (images, targets)
 
     loss = model.validation_step(batch, batch_idx=0)
@@ -47,8 +47,23 @@ def test_test_step():
     model = NeuralNetwork(input_size=input_size)
     model.log = lambda *args, **kwargs: None
     images = torch.randn(4, input_size)
-    targets = torch.randn(4, 1)
+    targets = torch.randn(4)  # Targets for regression
     batch = (images, targets)
 
     loss = model.test_step(batch, batch_idx=0)
     assert loss is not None, "test_step did not return a loss."
+
+
+def test_forward():
+    input_size = 10
+    model = NeuralNetwork(input_size=input_size)
+    x = torch.randn(1, input_size)
+    y = model(x)
+    assert y.shape == (1, 1)
+
+
+def test_configure_optimizers():
+    input_size = 10
+    model = NeuralNetwork(input_size=input_size)
+    optimizers = model.configure_optimizers()
+    assert optimizers is not None
