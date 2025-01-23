@@ -58,12 +58,8 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             model = NeuralNetwork(input_size=input_size, lr=effective_lr)  # Pass learning rate to the model
 
             # Callbacks
-            early_stopping_callback = EarlyStopping(
-                monitor="validation_loss", patience=3, verbose=True, mode="min"
-            )
-            checkpoint_callback = ModelCheckpoint(
-                dirpath="./models", monitor="validation_loss", mode="min"
-            )
+            early_stopping_callback = EarlyStopping(monitor="validation_loss", patience=3, verbose=True, mode="min")
+            checkpoint_callback = ModelCheckpoint(dirpath="./models", monitor="validation_loss", mode="min")
 
             # Trainer
             trainer = pl.Trainer(
