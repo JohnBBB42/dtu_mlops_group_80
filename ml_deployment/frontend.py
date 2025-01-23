@@ -1,78 +1,99 @@
-# frontend.py
 import os
-import numpy as np
-
 import pandas as pd
 import requests
 import streamlit as st
+import numpy as np
 from google.cloud import run_v2
 
-@st.cache_resource
+
 def get_backend_url():
-    """Get the URL of the backend service."""
-    parent = "projects/united-concord-447713-c7/locations/europe-west1"
+    """
+    Get the URL of the backend service dynamically from Google Cloud Run.
+    """
+    # Replace with your project ID and region
+    project_id = "united-concord-447713-c7"
+    region = "europe-west1"
+
+    # Initialize Google Cloud Run client
+    parent = f"projects/{project_id}/locations/{region}"
     client = run_v2.ServicesClient()
+
+    # Fetch all services in the specified region
     services = client.list_services(parent=parent)
     for service in services:
-        if service.name.split("/")[-1] == "bentoml_service":
+        if service.name.split("/")[-1] == "bentoml-service":  # Match the backend service name
             return service.uri
-    name = os.environ.get("BACKEND", None)
-    return name
 
-def predict_energy_price(features, backend):
-    """Send the features to the backend for prediction."""
-    predict_url = f"{backend}/predict"
-    payload = {"features": features.tolist()}
+    # Fallback to environment variable if the service is not found
+    return os.environ.get("BACKEND", None)
+
+
+def send_features_to_backend(features, backend_url):
+    """
+    Send features to the backend and get predictions.
+    """
     try:
-        response = requests.post(predict_url, json=payload, timeout=42)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Request failed: {e}")
+        predict_url = f"{backend_url}/predict"
+        response = requests.post(predict_url, json={"features": features}, timeout=60)
+        if response.status_code == 200:
+            return response.json()  # Parse the JSON response
+        else:
+            st.error(f"Backend error: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        st.error(f"Error connecting to backend: {e}")
         return None
 
-def main() -> None:
-    """Main function of the Streamlit frontend."""
-    backend = get_backend_url()
-    if backend is None:
-        st.error("Backend service not found")
-        return
 
-    st.title("Energy Price Predictor")
+def validate_csv(data):
+    """
+    Validate the uploaded CSV to ensure it has exactly 10 columns.
+    """
+    if data.shape[1] != 10:
+        st.error(f"Uploaded file must have exactly 10 columns. Your file has {data.shape[1]} columns.")
+        return False
+    return True
 
-    st.write("Enter the input features for energy price prediction:")
 
-    # Define your actual feature names here
-    feature_names = [
-        "Feature 1",
-        "Feature 2",
-        "Feature 3",
-        "Feature 4",
-        "Feature 5",
-        "Feature 6",
-        "Feature 7",
-        "Feature 8",
-        "Feature 9",
-        "Feature 10"
-    ]
-    
-    features = []
-    for name in feature_names:
-        value = st.number_input(f"{name}", value=0.0, format="%.4f")
-        features.append(value)
+def main():
+    """
+    Main Streamlit frontend app.
+    """
+    st.title("Energy Price Prediction")
+    st.markdown(
+        "Upload a CSV file containing exactly **10 features per row** for prediction. "
+        "The app will send the data to the backend and display predictions."
+    )
 
-    if st.button("Predict"):
-        if len(features) != 10:
-            st.error("Please enter all 10 features.")
-            return
+    # Dynamically fetch the backend URL
+    backend_url = get_backend_url()
+    if backend_url is None:
+        st.error("Backend service not found! Ensure it is deployed in Google Cloud Run.")
+        st.stop()
 
-        result = predict_energy_price(np.array(features), backend=backend)
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+    if uploaded_file:
+        try:
+            data = pd.read_csv(uploaded_file)
+            st.write("Preview of Uploaded Data:")
+            st.dataframe(data)
 
-        if result is not None and "prediction" in result:
-            prediction = result["prediction"]
-            st.success(f"Predicted Energy Price: {prediction[0]:.2f}")
-        else:
-            st.error("Failed to get prediction")
+            # Validate CSV file structure
+            if validate_csv(data):
+                if st.button("Predict"):
+                    # Convert the CSV data into a list of lists (one list per row)
+                    features = data.values.tolist()
+                    result = send_features_to_backend(features, backend_url)
+                    if result:
+                        # Backend returns nested lists, extract predictions
+                        predictions = [item[0] for item in result]
+                        st.write("Predictions:")
+                        st.dataframe(pd.DataFrame(predictions, columns=["Predicted Price"]))
+                    else:
+                        st.error("No predictions received from backend.")
+        except Exception as e:
+            st.error(f"Failed to process the uploaded file. Error: {e}")
+
 
 if __name__ == "__main__":
     main()
