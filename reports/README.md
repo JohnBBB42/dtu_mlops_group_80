@@ -256,7 +256,16 @@ These tests ensure that core components like data preprocessing, model training,
 >
 > Answer:
 
---- question 8 fill here ---
+Name                  Stmts   Miss  Cover
+-----------------------------------------
+old\test_api.py           0      0   100%
+src\energy\data.py       68      4    94%
+src\energy\model.py      49      8    84%
+-----------------------------------------
+TOTAL                   117     12    90%
+
+*The total code coverage of our code is 90%, which includes the most relevant source files to the project. This indicates that a majority of our code has been executed during testing, but 12 lines remain untested. While achieving 100% code coverage would be ideal, even if we reached that level, it would not guarantee the code is error-free. Code coverage only measures how much of the code is executed, not the quality or correctness of the tests themselves. Bugs can still arise from edge cases, incorrect assumptions, or unexpected integrations that the tests fail to address. Therefore, in addition to improving coverage, it’s essential to focus on writing robust test cases that validate functionality, handle edge cases, and account for real-world scenarios to ensure reliability and minimize errors.*
+
 
 ### Question 9
 
