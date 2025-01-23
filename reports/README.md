@@ -163,7 +163,7 @@ Group 80
 >
 > Answer:
 
-We use pip and conda for package managing and virtual enviorments. 
+We use pip and conda for package managing and virtual enviorments as it was proposed in the course. 
 The list of dependencies are specified in requirements.txt and requirements_dev.txt. 
 We use pipreqs to automatically create the requirements.txt
 To get an exact copy of the enviorment a new team member must: 
@@ -192,7 +192,11 @@ This process ensures that all required packages are installed and the environmen
 >
 > Answer:
 
---- question 5 fill here ---
+We initialized our project using the mlops_template from Nicki's repository (https://github.com/SkafteNicki/mlops_template). The structure includes key folders such as configs, dockerfiles, src/energy, and tests, each serving a specific purpose. The configs folder contains files for managing parameters and experiment setups, while the dockerfiles directory holds Docker configurations. The core functionality of the project is in src/energy, which contains scripts for data processing, model evaluation, and training.
+
+Additionally, we have a models folder to store ONNX model files, including optimized versions, and tests for unit testing. We also included an ml_deployment folder for deployment-specific scripts, such as bentofile.yaml for serving models and locust_file.py for performance testing. While we kept the docs folder from the template, we didn’t have time to use it. The outputs and reports directories are used for saving experimental results and documentation.
+
+Overall, we stayed close to the template but added the ml_deployment folder to better support deployment needs, adapting the structure to fit our project’s specific requirements.
 
 ### Question 6
 
@@ -256,15 +260,7 @@ These tests ensure that core components like data preprocessing, model training,
 >
 > Answer:
 
-Name                  Stmts   Miss  Cover
------------------------------------------
-old\test_api.py           0      0   100%
-src\energy\data.py       68      4    94%
-src\energy\model.py      49      8    84%
------------------------------------------
-TOTAL                   117     12    90%
-
-*The total code coverage of our code is 90%, which includes the most relevant source files to the project. This indicates that a majority of our code has been executed during testing, but 12 lines remain untested. While achieving 100% code coverage would be ideal, even if we reached that level, it would not guarantee the code is error-free. Code coverage only measures how much of the code is executed, not the quality or correctness of the tests themselves. Bugs can still arise from edge cases, incorrect assumptions, or unexpected integrations that the tests fail to address. Therefore, in addition to improving coverage, it’s essential to focus on writing robust test cases that validate functionality, handle edge cases, and account for real-world scenarios to ensure reliability and minimize errors.*
+The total code coverage of our code is 90%, which includes the most relevant source files to the project. This indicates that a majority of our code has been executed during testing, but 12 lines remain untested. While achieving 100% code coverage would be ideal, even if we reached that level, it would not guarantee the code is error-free. Code coverage only measures how much of the code is executed, not the quality or correctness of the tests themselves. Bugs can still arise from edge cases, incorrect assumptions, or unexpected integrations that the tests fail to address. Therefore, in addition to improving coverage, it’s essential to focus on writing robust test cases that validate functionality, handle edge cases, and account for real-world scenarios to ensure reliability and minimize errors.
 
 
 ### Question 9
