@@ -37,7 +37,7 @@ class NeuralNetwork(pl.LightningModule):
         y_pred = self(x)
         y_pred = y_pred.squeeze(-1)
         loss = self.loss_fn(y_pred, y)
-        self.log("val_loss", loss, prog_bar=True, on_epoch=True)
+        self.log("validation_loss", loss, prog_bar=True, on_epoch=True)
         return loss
 
     def test_step(self, batch, batch_idx):
