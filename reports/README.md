@@ -504,7 +504,8 @@ gcloud compute ssh group-80 --zone europe-west1-c
 >
 > Answer:
 
---- question 22 fill here ---
+Yes, we managed to train our model in the cloud using Google Cloud Compute Engine. We implemented this by containerizing our training process using Docker and integrating it with Google Cloud Build. Our approach involved creating a custom Docker image based on python:3.11-slim, which included our training code and dependencies. The Docker container was configured with an entrypoint to execute our training script (src/energy/train.py).
+We automated the build and deployment process using Cloud Build, which builds our Docker image and pushes it to Google Cloud's Container Registry in the europe-west1 region. The cloudbuild.yaml configuration defines this pipeline, storing our container in a project-specific registry (container-registry-group-80). 
 
 ## Deployment
 
