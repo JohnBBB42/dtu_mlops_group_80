@@ -586,7 +586,15 @@ The API is hosted as a fully managed, serverless service on Google Cloud Run. It
 > Answer:
 
 For unit testing, we implemented pytest with httpx to test our BentoML API service. Our test suite validated both successful and error scenarios for the /predict endpoint, ensuring proper handling of 10-feature inputs, response status codes, and data type validation.
-For load testing, we utilized Locust, 
+For load testing, we utilized Locust, configuring it with 10 concurrent users and a spawn rate of 1 user per second. Each user sent prediction requests with randomly generated 10-feature vectors to our localhost:3000 endpoint, with wait times between 1-2 seconds between requests. The results were promising:
+
+Successfully processed 1184 requests
+Maintained an average response time of 19.75ms
+Response time percentiles ranged from 15ms (median) to 114ms (max)
+Achieved 6.5 requests per second (RPS)
+Zero failures during the test period
+
+These metrics indicate that our API maintains stable performance under moderate load, with consistent response times and reliable service availability. The absence of failures suggests robust error handling and good service stability at this concurrency level.
 
 ### Question 26
 
