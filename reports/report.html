@@ -187,10 +187,11 @@ corporate and increase the quality of your code.</p>
 <em>application but also ... .</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>We implemented 12 tests across key modules: </p>
+<p>We implemented 14 tests across key modules: </p>
 <ol>
 <li><strong>Model Testing</strong>: Verifies output shapes, correctness of training, validation, and testing steps, including loss computation and backpropagation.</li>
 <li><strong>Data Testing</strong>: Validates preprocessing (creation of <code>.pt</code> files), dataset loading, data integrity, and batch generation in the data module.</li>
+<li><strong>API Testing</strong>: see Q25</li>
 </ol>
 <p>These tests ensure core components like preprocessing and model training function as expected, preventing errors from propagating and causing delays in larger projects.</p>
 <h3>Question 8</h3>
@@ -405,7 +406,7 @@ gcloud compute ssh group-80 --zone europe-west1-c</p>
 <strong>your project. You can take inspiration from <a href="figures/build.png">this figure</a>.</strong></p>
 <p>Answer:</p>
 </blockquote>
-<p><img alt="build" src="figures/build.png" /></p>
+<p><img alt="build" src="figures/build.jpg" /></p>
 <h3>Question 22</h3>
 <blockquote>
 <p><strong>Did you manage to train your model in the cloud using either the Engine or Vertex AI? If yes, explain how you did</strong>
@@ -456,7 +457,13 @@ We automated the build and deployment process using Cloud Build, which builds ou
 <p>Answer:</p>
 </blockquote>
 <p>For unit testing, we implemented pytest with httpx to test our BentoML API service. Our test suite validated both successful and error scenarios for the /predict endpoint, ensuring proper handling of 10-feature inputs, response status codes, and data type validation.
-For load testing, we utilized Locust, </p>
+For load testing, we utilized Locust, configuring it with 10 concurrent users and a spawn rate of 1 user per second. Each user sent prediction requests with randomly generated 10-feature vectors to our localhost:3000 endpoint, with wait times between 1-2 seconds between requests. The results were promising:</p>
+<p>Successfully processed 1184 requests
+Maintained an average response time of 19.75ms
+Response time percentiles ranged from 15ms (median) to 114ms (max)
+Achieved 6.5 requests per second (RPS)
+Zero failures during the test period</p>
+<p>These metrics indicate that our API maintains stable performance under moderate load, with consistent response times and reliable service availability. The absence of failures suggests robust error handling and good service stability at this concurrency level.</p>
 <h3>Question 26</h3>
 <blockquote>
 <p><strong>Did you manage to implement monitoring of your deployed model? If yes, explain how it works. If not, explain how</strong>
@@ -510,7 +517,17 @@ For load testing, we utilized Locust, </p>
 <em>Whenever we commit code and push to GitHub, it auto triggers ... and ... . From there the diagram shows ...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 29 fill here ---</p>
+<p><img alt="this figure" src="figures/overview.jpg" />
+The diagram represents the architecture of our machine learning operations pipeline, highlighting the tools and services we used throughout the project.
+The pipeline starts with our <strong>local development environment</strong>, where we implemented the model using <strong>PyTorch Lightning</strong> and tracked experiments with <strong>WandB</strong>.
+Version control and collaboration were managed via <strong>GitHub</strong>, which integrates with <strong>GitHub Actions</strong> to trigger continuous integration workflows.
+These workflows included <strong>Bandit</strong> for security checks, <strong>unit tests</strong>, and containerization using <strong>Docker</strong>.
+For data management, we utilized <strong>DVC</strong> to track datasets and ensure reproducibility.
+The trained PyTorch model was converted to an <strong>ONNX format</strong> for optimized inference. This ONNX model was then packaged using <strong>BentoML</strong> to create a scalable and deployable API, which we deployed to <strong>Google Cloud Run</strong> for serving predictions.
+Additionally, a <strong>Streamlit</strong> application provided a user-friendly interface for interacting with the API, allowing predictions to be made directly from uploaded data.
+The system's flexibility is enhanced by integration with <strong>FastAPI</strong>, which supported API endpoints for inference and monitoring.
+This architecture demonstrates the end-to-end workflow from development to deployment, combining local resources and cloud services.
+The automated integration and deployment ensure scalability, reproducibility, and efficient management of machine learning experiments. It highlights the collaborative and operational tools used to streamline the project.</p>
 <h3>Question 30</h3>
 <blockquote>
 <p><strong>Discuss the overall struggles of the project. Where did you spend most time and what did you do to overcome these</strong>

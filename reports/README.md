@@ -515,7 +515,7 @@ gcloud compute ssh group-80 --zone europe-west1-c
 >
 > Answer:
 
-![build](figures/build.png)
+![build](figures/build.jpg)
 
 ### Question 22
 
