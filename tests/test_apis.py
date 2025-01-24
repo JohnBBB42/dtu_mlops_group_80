@@ -26,7 +26,7 @@ def test_predict_valid_input(client):
         pytest.fail("The request to /predict timed out.")
 
     assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
-    
+
     # Expecting the response to be a list of lists, e.g., [[prediction_value]]
     try:
         json_response = response.json()

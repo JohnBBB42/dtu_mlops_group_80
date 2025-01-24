@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import bentoml
 import numpy as np
 from onnxruntime import InferenceSession
@@ -13,7 +14,12 @@ class EnergyPricePredictorService:
 
     def __init__(self) -> None:
         # Load your ONNX model
-        self.model = InferenceSession("optimized_model.onnx")
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(current_dir, "optimized_model.onnx")
+
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found at {model_path}")
+        self.model = InferenceSession(model_path)
 
     @bentoml.api(
         batchable=True,
