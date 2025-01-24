@@ -42,6 +42,7 @@ def test_predict_valid_input(client):
     # Optionally, check if the prediction is a float
     assert isinstance(json_response[0][0], (float, int)), "Prediction is not a number."
 
+
 def test_predict_invalid_input(client):
     """
     Test the /predict endpoint with invalid input data.
