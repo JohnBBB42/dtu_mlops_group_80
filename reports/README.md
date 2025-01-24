@@ -534,7 +534,11 @@ We automated the build and deployment process using Cloud Build, which builds ou
 >
 > Answer:
 
---- question 23 fill here ---
+We implemented an API for our model using **BentoML** to provide efficient and scalable energy price predictions. The API is defined in `bentoml_service.py`, where the optimized ONNX model (`optimized_model.onnx`) is loaded and exposed through a `/predict` endpoint. The API processes input features as NumPy arrays, performs inference using ONNX Runtime, and supports batch predictions for up to 128 inputs at once.
+
+To achieve this, we first converted our PyTorch model to ONNX format (`onnx_model.py`) and then applied graph optimizations (`onnx_optimize.py`) to enhance inference speed and efficiency. These steps ensure that the API is fast, lightweight, and suitable for real-world deployments.
+
+This implementation combines ONNX optimizations and BentoML’s microservice framework to deliver a reliable and performant API for energy price prediction.
 
 ### Question 24
 
@@ -550,7 +554,9 @@ We automated the build and deployment process using Cloud Build, which builds ou
 >
 > Answer:
 
---- question 24 fill here ---
+We successfully deployed our API on **Google Cloud Run** after testing it locally. The API, built using **BentoML** and an optimized ONNX model, was first served locally to ensure its functionality. Afterward, we containerized the application and pushed the image to **Artifact Registry** before deploying it to the cloud.
+
+The API is hosted as a fully managed, serverless service on Google Cloud Run. It dynamically scales based on traffic, ensuring efficient performance. Users can interact with the API by sending requests to the `/predict` endpoint with input data in JSON format. This deployment ensures scalability, reliability, and easy access for real-world applications.
 
 ### Question 25
 
@@ -615,7 +621,11 @@ We automated the build and deployment process using Cloud Build, which builds ou
 >
 > Answer:
 
---- question 28 fill here ---
+We implemented a **Streamlit frontend** for our API to enhance usability and provide a user-friendly interface for making predictions. The frontend allows users to upload a CSV file containing 10 features per row, which is then sent to the backend hosted on Google Cloud Run for predictions. This implementation helps non-technical users interact with our machine learning model without needing to access the backend directly.
+
+The frontend dynamically fetches the backend URL from Google Cloud Run, ensuring flexibility and seamless integration. Once a CSV file is uploaded and validated, the features are sent to the API endpoint, and the predictions are displayed in a table for easy visualization.
+
+We chose Streamlit for its simplicity and rapid prototyping capabilities, enabling us to build a functional and interactive interface in minimal time. This additional feature showcases the practical application of our project and improves accessibility for end-users.
 
 ### Question 29
 
@@ -677,8 +687,8 @@ By integrating these components into the Business Analytics curriculum, students
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
-Jonathan was primarily responsible for setting up and managing the cloud infrastructure and API integration, leveraging his prior experience to streamline deployment and scaling. Jonas and Jan focused on implementing the machine learning model, writing unit tests, and setting up logging frameworks like WandB to ensure experiment tracking and reproducibility. 
+s244501 was primarily responsible for setting up and managing the cloud infrastructure and API integration, leveraging his prior experience to streamline deployment and scaling. s232811 and s232812 focused on implementing the machine learning model, writing unit tests, and setting up logging frameworks like WandB to ensure experiment tracking and reproducibility.
 
 All members contributed actively to the project, collaborating on code development, debugging, and integrating various tools into the pipeline. Tasks were distributed to leverage individual strengths while maintaining group collaboration to address challenges collectively.
 
-Generative AI tools were used extensively, particularly for debugging and resolving integration issues. GitHub Copilot assisted in writing code and optimizing certain implementations. These tools significantly enhanced productivity and reduced development time.
+Generative AI tools were used extensively, particularly for debugging and resolving integration issues. GitHub Copilot assisted in writing code and optimizing certain implementations. It was certainly useful to create commit messages.
