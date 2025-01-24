@@ -34,28 +34,33 @@ jobs:
           python - <<EOF
           import os
           import wandb
+          from datetime import datetime, timedelta
 
           # Initialize wandb API
           api = wandb.Api()
 
           # Get the list of artifacts
-          artifacts = api.artifacts(type='model', project=os.getenv('WANDB_PROJECT'))
+          artifacts = api.artifacts(
+              f"{os.getenv('WANDB_ENTITY')}/{os.getenv('WANDB_PROJECT')}",
+              per_page=100
+          )
 
           # Check for new or updated artifacts
           new_artifact_found = False
           for artifact in artifacts:
-              if artifact.updated_at > artifact.created_at:
+              if artifact.type == 'model' and artifact.updated_at > artifact.created_at:
                   new_artifact_found = True
                   artifact_name = artifact.name
-                  artifact_updated_at = artifact.updated_at
+                  artifact_updated_at = artifact.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC')
                   break
 
+          # Using the new GitHub Actions output syntax
           if new_artifact_found:
-              print(f"::set-output name=new_artifact::true")
-              print(f"::set-output name=artifact_name::{artifact_name}")
-              print(f"::set-output name=artifact_updated_at::{artifact_updated_at}")
+              print(f"new_artifact=true" >> "$GITHUB_OUTPUT")
+              print(f"artifact_name={artifact_name}" >> "$GITHUB_OUTPUT")
+              print(f"artifact_updated_at={artifact_updated_at}" >> "$GITHUB_OUTPUT")
           else:
-              print(f"::set-output name=new_artifact::false")
+              print(f"new_artifact=false" >> "$GITHUB_OUTPUT")
           EOF
 
       - name: Create issue if new artifact found
@@ -66,6 +71,9 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.name,
-              title: `New Model Artifact: ${steps.check_artifacts.outputs.artifact_name}`,
-              body: `A new model artifact has been detected.\n\n**Artifact Name:** ${steps.check_artifacts.outputs.artifact_name}\n**Updated At:** ${steps.check_artifacts.outputs.artifact_updated_at}\n\nPlease review the changes.`
+              title: `New Model Artifact: ${process.env.ARTIFACT_NAME}`,
+              body: `A new model artifact has been detected.\n\n**Artifact Name:** ${process.env.ARTIFACT_NAME}\n**Updated At:** ${process.env.ARTIFACT_UPDATED_AT}\n\nPlease review the changes.`
             })
+        env:
+          ARTIFACT_NAME: ${{ steps.check_artifacts.outputs.artifact_name }}
+          ARTIFACT_UPDATED_AT: ${{ steps.check_artifacts.outputs.artifact_updated_at }}
