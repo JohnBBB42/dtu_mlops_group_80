@@ -444,7 +444,19 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 17 fill here ---
+We used the following GCP services in our project:
+
+1. **Artifact Registry**: Used for storing and managing Docker container images. This allowed us to securely store our containerized applications and retrieve them during deployment.
+
+2. **Cloud Build**: Used to automate the building and testing of Docker images. It streamlined our workflow by ensuring that images were consistently built and ready for deployment.
+
+3. **Cloud Run**: Used for deploying containerized applications. This service allowed us to host our inference APIs in a fully managed serverless environment, scaling automatically based on traffic.
+
+4. **Compute Engine**: Used to run virtual machines for training and testing machine learning models. Compute Engine provided the computational resources needed for heavier workloads that couldn’t be managed locally.
+
+5. **Cloud Storage (Bucket)**: Used for storing large datasets and model artifacts. This service allowed easy sharing and retrieval of data across team members and during training or inference workflows.
+
+These services worked together to streamline the development, testing, and deployment processes while ensuring scalability and accessibility.
 
 ### Question 18
 
