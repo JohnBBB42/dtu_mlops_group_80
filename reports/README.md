@@ -669,7 +669,17 @@ We chose Streamlit for its simplicity and rapid prototyping capabilities, enabli
 >
 > Answer:
 
---- question 29 fill here ---
+![this figure](figures/overview.jpg)
+The diagram represents the architecture of our machine learning operations pipeline, highlighting the tools and services we used throughout the project.
+The pipeline starts with our **local development environment**, where we implemented the model using **PyTorch Lightning** and tracked experiments with **WandB**.
+Version control and collaboration were managed via **GitHub**, which integrates with **GitHub Actions** to trigger continuous integration workflows.
+These workflows included **Bandit** for security checks, **unit tests**, and containerization using **Docker**.
+For data management, we utilized **DVC** to track datasets and ensure reproducibility.
+The trained PyTorch model was converted to an **ONNX format** for optimized inference. This ONNX model was then packaged using **BentoML** to create a scalable and deployable API, which we deployed to **Google Cloud Run** for serving predictions.
+Additionally, a **Streamlit** application provided a user-friendly interface for interacting with the API, allowing predictions to be made directly from uploaded data.
+The system's flexibility is enhanced by integration with **FastAPI**, which supported API endpoints for inference and monitoring.
+This architecture demonstrates the end-to-end workflow from development to deployment, combining local resources and cloud services.
+The automated integration and deployment ensure scalability, reproducibility, and efficient management of machine learning experiments. It highlights the collaborative and operational tools used to streamline the project.
 
 ### Question 30
 
