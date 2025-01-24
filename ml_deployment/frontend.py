@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import requests
 import streamlit as st
-import numpy as np
 from google.cloud import run_v2
 
 
