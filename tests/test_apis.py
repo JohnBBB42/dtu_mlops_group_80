@@ -5,12 +5,14 @@ import random
 # Define the API endpoint
 API_ENDPOINT = "https://bentoml-service-252171111954.europe-west1.run.app"
 
+
 @pytest.fixture(scope="module")
 def client():
     """
     Fixture to create an HTTPX client with an increased timeout.
     """
     return httpx.Client(base_url=API_ENDPOINT, timeout=30.0)  # Increased timeout to 30 seconds
+
 
 def test_predict_valid_input(client):
     """

@@ -380,18 +380,18 @@ The exact Python environment and dependencies were recorded in `requirements.txt
 
 In our experiments, we tracked critical metrics and hyperparameters using WandB. The first screenshot shows the **hyperparameter_tuning** for different hyperparameter sweeps, such as learning rate (`lr`), batch size, and epochs. Validation loss is crucial as it measures model performance on unseen data, guiding us in selecting the best hyperparameters. Notably, the plot reveals signs of overfitting in certain sweeps where validation loss increases sharply after an initial stable phase. This highlights the importance of early stopping and regularization in our training process to prevent overfitting.
 
-[validation_loss](figures/validation_loss.png)
+![validation_loss](figures/validation_loss.png)
 
 
 The second screenshot illustrates the **importance and correlation of hyperparameters** with validation loss. Batch size emerged as the most influential parameter, showing a strong negative correlation with loss, meaning smaller batch sizes likely resulted in better validation performance. Such insights help refine our experiments by focusing on impactful hyperparameters while deprioritizing less critical ones. This analysis was essential in efficiently navigating the parameter space.
 
 
-[hyperparameter_importance](figures/hyperparameter_importance.png)
+![hyperparameter_importance](figures/hyperparameter_importance.png)
 
 
 The third screenshot depicts a **parallel coordinate plot** of hyperparameter combinations and their corresponding validation loss. This visualization reveals how specific configurations (e.g., lower batch sizes paired with moderate learning rates) lead to improved performance, while certain combinations show suboptimal results. These observations enabled better decision-making during hyperparameter optimization by clearly visualizing the trade-offs and relationships between parameters.
 
-[hyperparameter_tuning](figures/hyperparameter_tuning.png)
+![hyperparameter_tuning](figures/hyperparameter_tuning.png)
 
 
 These metrics and visualizations were vital in understanding the effects of different configurations on model performance, ensuring we identified the best-performing setup. Tracking these allowed us to iteratively improve the model, address overfitting issues, and maintain experiment reproducibility with a clear audit trail of parameter choices and their outcomes.
@@ -410,7 +410,20 @@ These metrics and visualizations were vital in understanding the effects of diff
 >
 > Answer:
 
---- question 15 fill here ---
+In this project we created one docker image for the training of our models. 
+We structured the Dockerfile with multi-stage builds to optimize the final image size.
+
+To run training experiments, we used:
+bash 
+docker run -v $(pwd)/data:/data training:latest \ 
+    --learning_rate=0.001 \ 
+    --batch_size=32 \ 
+    --epochs=50 
+
+
+The container mounts a local data volume and accepts hyperparameters as arguments. This setup ensures reproducible training runs across different environments. By using Docker, we eliminated the "it works on my machine" problem and ensured consistent behavior across development environments. The volume mounting strategy allows us to easily feed different datasets into the container while keeping the training code isolated and reproducible.
+
+The link to the dockerfile we used for the training can be found here in out git repository. <https://github.com/JohnBBB42/dtu_mlops_group_80/blob/main/dockerfiles/train.dockerfile>
 
 ### Question 16
 
@@ -444,7 +457,19 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 17 fill here ---
+We used the following GCP services in our project:
+
+1. **Artifact Registry**: Used for storing and managing Docker container images. This allowed us to securely store our containerized applications and retrieve them during deployment.
+
+2. **Cloud Build**: Used to automate the building and testing of Docker images. It streamlined our workflow by ensuring that images were consistently built and ready for deployment.
+
+3. **Cloud Run**: Used for deploying containerized applications. This service allowed us to host our inference APIs in a fully managed serverless environment, scaling automatically based on traffic.
+
+4. **Compute Engine**: Used to run virtual machines for training and testing machine learning models. Compute Engine provided the computational resources needed for heavier workloads that couldn’t be managed locally.
+
+5. **Cloud Storage (Bucket)**: Used for storing large datasets and model artifacts. This service allowed easy sharing and retrieval of data across team members and during training or inference workflows.
+
+These services worked together to streamline the development, testing, and deployment processes while ensuring scalability and accessibility.
 
 ### Question 18
 
@@ -459,7 +484,10 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 18 fill here ---
+We used Google Cloud Platform's Compute Engine to run our training workloads. We created instances in the europe-west1-c zone using the PyTorch CPU-optimized deep learning VM image (pytorch-latest-cpu) from the deeplearning-platform-release project. This pre-configured image provided us with a ready-to-use environment for machine learning tasks. After provisioning the instance named 'group-80', we accessed it via SSH using the gcloud compute ssh command. We then set up our development environment by creating a new virtual environment, pulling our code repository from Git, and retrieving our data using DVC (Data Version Control). This setup allowed us to efficiently manage both our code and data versions while training our models. 
+gcloud compute instances create group-80 --zone=europe-west1-c --image-fam
+ily=pytorch-latest-cpu --image-project=deeplearning-platform-release
+gcloud compute ssh group-80 --zone europe-west1-c
 
 ### Question 19
 
@@ -468,7 +496,7 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 19 fill here ---
+![bucket](figures/bucket.jpg)
 
 ### Question 20
 
@@ -477,7 +505,7 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 20 fill here ---
+![registry](figures/registry.jpg)
 
 ### Question 21
 
@@ -486,7 +514,7 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 21 fill here ---
+![build](figures/build.png)
 
 ### Question 22
 
@@ -501,7 +529,8 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 22 fill here ---
+Yes, we managed to train our model in the cloud using Google Cloud Compute Engine. We implemented this by containerizing our training process using Docker and integrating it with Google Cloud Build. Our approach involved creating a custom Docker image based on python:3.11-slim, which included our training code and dependencies. The Docker container was configured with an entrypoint to execute our training script (src/energy/train.py).
+We automated the build and deployment process using Cloud Build, which builds our Docker image and pushes it to Google Cloud's Container Registry in the europe-west1 region. The cloudbuild.yaml configuration defines this pipeline, storing our container in a project-specific registry (container-registry-group-80). 
 
 ## Deployment
 
@@ -518,7 +547,11 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 23 fill here ---
+We implemented an API for our model using **BentoML** to provide efficient and scalable energy price predictions. The API is defined in `bentoml_service.py`, where the optimized ONNX model (`optimized_model.onnx`) is loaded and exposed through a `/predict` endpoint. The API processes input features as NumPy arrays, performs inference using ONNX Runtime, and supports batch predictions for up to 128 inputs at once.
+
+To achieve this, we first converted our PyTorch model to ONNX format (`onnx_model.py`) and then applied graph optimizations (`onnx_optimize.py`) to enhance inference speed and efficiency. These steps ensure that the API is fast, lightweight, and suitable for real-world deployments.
+
+This implementation combines ONNX optimizations and BentoML’s microservice framework to deliver a reliable and performant API for energy price prediction.
 
 ### Question 24
 
@@ -534,7 +567,9 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 24 fill here ---
+We successfully deployed our API on **Google Cloud Run** after testing it locally. The API, built using **BentoML** and an optimized ONNX model, was first served locally to ensure its functionality. Afterward, we containerized the application and pushed the image to **Artifact Registry** before deploying it to the cloud.
+
+The API is hosted as a fully managed, serverless service on Google Cloud Run. It dynamically scales based on traffic, ensuring efficient performance. Users can interact with the API by sending requests to the `/predict` endpoint with input data in JSON format. This deployment ensures scalability, reliability, and easy access for real-world applications.
 
 ### Question 25
 
@@ -599,7 +634,11 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 28 fill here ---
+We implemented a **Streamlit frontend** for our API to enhance usability and provide a user-friendly interface for making predictions. The frontend allows users to upload a CSV file containing 10 features per row, which is then sent to the backend hosted on Google Cloud Run for predictions. This implementation helps non-technical users interact with our machine learning model without needing to access the backend directly.
+
+The frontend dynamically fetches the backend URL from Google Cloud Run, ensuring flexibility and seamless integration. Once a CSV file is uploaded and validated, the features are sent to the API endpoint, and the predictions are displayed in a table for easy visualization.
+
+We chose Streamlit for its simplicity and rapid prototyping capabilities, enabling us to build a functional and interactive interface in minimal time. This additional feature showcases the practical application of our project and improves accessibility for end-users.
 
 ### Question 29
 
@@ -661,4 +700,8 @@ By integrating these components into the Business Analytics curriculum, students
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
---- question 31 fill here ---
+s244501 was primarily responsible for setting up and managing the cloud infrastructure and API integration, leveraging his prior experience to streamline deployment and scaling. s232811 and s232812 focused on implementing the machine learning model, writing unit tests, and setting up logging frameworks like WandB to ensure experiment tracking and reproducibility.
+
+All members contributed actively to the project, collaborating on code development, debugging, and integrating various tools into the pipeline. Tasks were distributed to leverage individual strengths while maintaining group collaboration to address challenges collectively.
+
+Generative AI tools were used extensively, particularly for debugging and resolving integration issues. GitHub Copilot assisted in writing code and optimizing certain implementations. It was certainly useful to create commit messages.
