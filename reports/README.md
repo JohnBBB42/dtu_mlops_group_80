@@ -584,7 +584,8 @@ The API is hosted as a fully managed, serverless service on Google Cloud Run. It
 >
 > Answer:
 
---- question 25 fill here ---
+For unit testing, we implemented pytest with httpx to test our BentoML API service. Our test suite validated both successful and error scenarios for the /predict endpoint, ensuring proper handling of 10-feature inputs, response status codes, and data type validation.
+For load testing, we utilized Locust, 
 
 ### Question 26
 
