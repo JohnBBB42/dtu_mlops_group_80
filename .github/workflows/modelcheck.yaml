@@ -1,8 +1,6 @@
 name: Model Artifact Check
 
 on:
-  schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
