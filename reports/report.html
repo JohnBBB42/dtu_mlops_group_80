@@ -63,14 +63,14 @@ will check the repositories and the code to verify your answers.</p>
 <li>[x] Add a continues workflow that triggers when data changes (M19)</li>
 <li>[x] Add a continues workflow that triggers when changes to the model registry is made (M19)</li>
 <li>[x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)</li>
-<li>[ ] Create a trigger workflow for automatically building your docker images (M21)</li>
+<li>[x] Create a trigger workflow for automatically building your docker images (M21)</li>
 <li>[x] Get your model training in GCP using either the Engine or Vertex AI (M21)</li>
 <li>[x] Create a FastAPI application that can do inference using your model (M22)</li>
 <li>[x] Deploy your model in GCP using either Functions or Run as the backend (M23)</li>
-<li>[ ] Write API tests for your application and setup continues integration for these (M24)</li>
-<li>[ ] Load test your application (M24)</li>
+<li>[X] Write API tests for your application and setup continues integration for these (M24)</li>
+<li>[x] Load test your application (M24)</li>
 <li>[x] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)</li>
-<li>[ ] Create a frontend for your API (M26)</li>
+<li>[x] Create a frontend for your API (M26)</li>
 </ul>
 <h3>Week 3</h3>
 <ul>
@@ -302,11 +302,11 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <p>Answer:</p>
 </blockquote>
 <p>In our experiments, we tracked critical metrics and hyperparameters using WandB. The first screenshot shows the <strong>hyperparameter_tuning</strong> for different hyperparameter sweeps, such as learning rate (<code>lr</code>), batch size, and epochs. Validation loss is crucial as it measures model performance on unseen data, guiding us in selecting the best hyperparameters. Notably, the plot reveals signs of overfitting in certain sweeps where validation loss increases sharply after an initial stable phase. This highlights the importance of early stopping and regularization in our training process to prevent overfitting.</p>
-<p><a href="figures/validation_loss.png">validation_loss</a></p>
+<p><img alt="validation_loss" src="figures/validation_loss.png" /></p>
 <p>The second screenshot illustrates the <strong>importance and correlation of hyperparameters</strong> with validation loss. Batch size emerged as the most influential parameter, showing a strong negative correlation with loss, meaning smaller batch sizes likely resulted in better validation performance. Such insights help refine our experiments by focusing on impactful hyperparameters while deprioritizing less critical ones. This analysis was essential in efficiently navigating the parameter space.</p>
-<p><a href="figures/hyperparameter_importance.png">hyperparameter_importance</a></p>
+<p><img alt="hyperparameter_importance" src="figures/hyperparameter_importance.png" /></p>
 <p>The third screenshot depicts a <strong>parallel coordinate plot</strong> of hyperparameter combinations and their corresponding validation loss. This visualization reveals how specific configurations (e.g., lower batch sizes paired with moderate learning rates) lead to improved performance, while certain combinations show suboptimal results. These observations enabled better decision-making during hyperparameter optimization by clearly visualizing the trade-offs and relationships between parameters.</p>
-<p><a href="figures/hyperparameter_tuning.png">hyperparameter_tuning</a></p>
+<p><img alt="hyperparameter_tuning" src="figures/hyperparameter_tuning.png" /></p>
 <p>These metrics and visualizations were vital in understanding the effects of different configurations on model performance, ensuring we identified the best-performing setup. Tracking these allowed us to iteratively improve the model, address overfitting issues, and maintain experiment reproducibility with a clear audit trail of parameter choices and their outcomes.</p>
 <h3>Question 15</h3>
 <blockquote>
@@ -318,7 +318,16 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>training docker image: <code>docker run trainer:latest lr=1e-3 batch_size=64</code>. Link to docker file: <weblink></em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 15 fill here ---</p>
+<p>In this project we created one docker image for the training of our models. 
+We structured the Dockerfile with multi-stage builds to optimize the final image size.</p>
+<p>To run training experiments, we used:
+bash 
+docker run -v $(pwd)/data:/data training:latest \ 
+    --learning_rate=0.001 \ 
+    --batch_size=32 \ 
+    --epochs=50 </p>
+<p>The container mounts a local data volume and accepts hyperparameters as arguments. This setup ensures reproducible training runs across different environments. By using Docker, we eliminated the "it works on my machine" problem and ensured consistent behavior across development environments. The volume mounting strategy allows us to easily feed different datasets into the container while keeping the training code isolated and reproducible.</p>
+<p>The link to the dockerfile we used for the training can be found here in out git repository. <a href="https://github.com/JohnBBB42/dtu_mlops_group_80/blob/main/dockerfiles/train.dockerfile">https://github.com/JohnBBB42/dtu_mlops_group_80/blob/main/dockerfiles/train.dockerfile</a></p>
 <h3>Question 16</h3>
 <blockquote>
 <p><strong>When running into bugs while trying to run your experiments, how did you perform debugging? Additionally, did you</strong>
@@ -343,7 +352,25 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>We used the following two services: Engine and Bucket. Engine is used for... and Bucket is used for...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 17 fill here ---</p>
+<p>We used the following GCP services in our project:</p>
+<ol>
+<li>
+<p><strong>Artifact Registry</strong>: Used for storing and managing Docker container images. This allowed us to securely store our containerized applications and retrieve them during deployment.</p>
+</li>
+<li>
+<p><strong>Cloud Build</strong>: Used to automate the building and testing of Docker images. It streamlined our workflow by ensuring that images were consistently built and ready for deployment.</p>
+</li>
+<li>
+<p><strong>Cloud Run</strong>: Used for deploying containerized applications. This service allowed us to host our inference APIs in a fully managed serverless environment, scaling automatically based on traffic.</p>
+</li>
+<li>
+<p><strong>Compute Engine</strong>: Used to run virtual machines for training and testing machine learning models. Compute Engine provided the computational resources needed for heavier workloads that couldn’t be managed locally.</p>
+</li>
+<li>
+<p><strong>Cloud Storage (Bucket)</strong>: Used for storing large datasets and model artifacts. This service allowed easy sharing and retrieval of data across team members and during training or inference workflows.</p>
+</li>
+</ol>
+<p>These services worked together to streamline the development, testing, and deployment processes while ensuring scalability and accessibility.</p>
 <h3>Question 18</h3>
 <blockquote>
 <p><strong>The backbone of GCP is the Compute engine. Explained how you made use of this service and what type of VMs</strong>
@@ -354,28 +381,31 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>using a custom container: ...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 18 fill here ---</p>
+<p>We used Google Cloud Platform's Compute Engine to run our training workloads. We created instances in the europe-west1-c zone using the PyTorch CPU-optimized deep learning VM image (pytorch-latest-cpu) from the deeplearning-platform-release project. This pre-configured image provided us with a ready-to-use environment for machine learning tasks. After provisioning the instance named 'group-80', we accessed it via SSH using the gcloud compute ssh command. We then set up our development environment by creating a new virtual environment, pulling our code repository from Git, and retrieving our data using DVC (Data Version Control). This setup allowed us to efficiently manage both our code and data versions while training our models. 
+gcloud compute instances create group-80 --zone=europe-west1-c --image-fam
+ily=pytorch-latest-cpu --image-project=deeplearning-platform-release
+gcloud compute ssh group-80 --zone europe-west1-c</p>
 <h3>Question 19</h3>
 <blockquote>
 <p><strong>Insert 1-2 images of your GCP bucket, such that we can see what data you have stored in it.</strong>
 <strong>You can take inspiration from <a href="figures/bucket.png">this figure</a>.</strong></p>
 <p>Answer:</p>
 </blockquote>
-<p><a href="figures/bucket.jpg">bucket</a></p>
+<p><img alt="bucket" src="figures/bucket.jpg" /></p>
 <h3>Question 20</h3>
 <blockquote>
 <p><strong>Upload 1-2 images of your GCP artifact registry, such that we can see the different docker images that you have</strong>
 <strong>stored. You can take inspiration from <a href="figures/registry.png">this figure</a>.</strong></p>
 <p>Answer:</p>
 </blockquote>
-<p><a href="figures/registry.jpg">registry</a></p>
+<p><img alt="registry" src="figures/registry.jpg" /></p>
 <h3>Question 21</h3>
 <blockquote>
 <p><strong>Upload 1-2 images of your GCP cloud build history, so we can see the history of the images that have been build in</strong>
 <strong>your project. You can take inspiration from <a href="figures/build.png">this figure</a>.</strong></p>
 <p>Answer:</p>
 </blockquote>
-<p><a href="figures/build.png">build</a></p>
+<p><img alt="build" src="figures/build.png" /></p>
 <h3>Question 22</h3>
 <blockquote>
 <p><strong>Did you manage to train your model in the cloud using either the Engine or Vertex AI? If yes, explain how you did</strong>
@@ -386,7 +416,8 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>was because ...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 22 fill here ---</p>
+<p>Yes, we managed to train our model in the cloud using Google Cloud Compute Engine. We implemented this by containerizing our training process using Docker and integrating it with Google Cloud Build. Our approach involved creating a custom Docker image based on python:3.11-slim, which included our training code and dependencies. The Docker container was configured with an entrypoint to execute our training script (src/energy/train.py).
+We automated the build and deployment process using Cloud Build, which builds our Docker image and pushes it to Google Cloud's Container Registry in the europe-west1 region. The cloudbuild.yaml configuration defines this pipeline, storing our container in a project-specific registry (container-registry-group-80). </p>
 <h2>Deployment</h2>
 <h3>Question 23</h3>
 <blockquote>
@@ -398,7 +429,9 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>to the API to make it more ...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 23 fill here ---</p>
+<p>We implemented an API for our model using <strong>BentoML</strong> to provide efficient and scalable energy price predictions. The API is defined in <code>bentoml_service.py</code>, where the optimized ONNX model (<code>optimized_model.onnx</code>) is loaded and exposed through a <code>/predict</code> endpoint. The API processes input features as NumPy arrays, performs inference using ONNX Runtime, and supports batch predictions for up to 128 inputs at once.</p>
+<p>To achieve this, we first converted our PyTorch model to ONNX format (<code>onnx_model.py</code>) and then applied graph optimizations (<code>onnx_optimize.py</code>) to enhance inference speed and efficiency. These steps ensure that the API is fast, lightweight, and suitable for real-world deployments.</p>
+<p>This implementation combines ONNX optimizations and BentoML’s microservice framework to deliver a reliable and performant API for energy price prediction.</p>
 <h3>Question 24</h3>
 <blockquote>
 <p><strong>Did you manage to deploy your API, either in locally or cloud? If not, describe why. If yes, describe how and</strong>
@@ -410,7 +443,8 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em><code>curl -X POST -F "file=@file.json"&lt;weburl&gt;</code></em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 24 fill here ---</p>
+<p>We successfully deployed our API on <strong>Google Cloud Run</strong> after testing it locally. The API, built using <strong>BentoML</strong> and an optimized ONNX model, was first served locally to ensure its functionality. Afterward, we containerized the application and pushed the image to <strong>Artifact Registry</strong> before deploying it to the cloud.</p>
+<p>The API is hosted as a fully managed, serverless service on Google Cloud Run. It dynamically scales based on traffic, ensuring efficient performance. Users can interact with the API by sending requests to the <code>/predict</code> endpoint with input data in JSON format. This deployment ensures scalability, reliability, and easy access for real-world applications.</p>
 <h3>Question 25</h3>
 <blockquote>
 <p><strong>Did you perform any unit testing and load testing of your API? If yes, explain how you did it and what results for</strong>
@@ -421,7 +455,8 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>before the service crashed.</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 25 fill here ---</p>
+<p>For unit testing, we implemented pytest with httpx to test our BentoML API service. Our test suite validated both successful and error scenarios for the /predict endpoint, ensuring proper handling of 10-feature inputs, response status codes, and data type validation.
+For load testing, we utilized Locust, </p>
 <h3>Question 26</h3>
 <blockquote>
 <p><strong>Did you manage to implement monitoring of your deployed model? If yes, explain how it works. If not, explain how</strong>
@@ -432,7 +467,8 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>measure ... and ... that would inform us about this ... behaviour of our application.</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 26 fill here ---</p>
+<p>We did not implement monitoring for our electricity price prediction model, but it would be critical during volatile periods like the energy crisis years in 2022 and 2023 for example. Monitoring would help detect data drift, such as changes in market dynamics or energy consumption patterns, which could lead to inaccurate predictions. It would also track target drift, like shifts in electricity price distributions, signaling the need for retraining.</p>
+<p>By identifying these changes early, we could adapt the model to current conditions, ensuring it remains accurate and reliable. Monitoring would make the application robust and valuable for stakeholders relying on precise forecasts during unstable periods.</p>
 <h2>Overall discussion of project</h2>
 <blockquote>
 <p>In the following section we would like you to think about the general structure of your project.</p>
@@ -447,7 +483,8 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>costing the most was ... due to ... . Working in the cloud was ...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 27 fill here ---</p>
+<p>During the project, we used various cloud services, with <strong>Compute Engine</strong> being the most expensive at $3.47. <strong>Cloud Run</strong> followed at $1.70, while services like <strong>Artifact Registry</strong> and <strong>Cloud Storage</strong> incurred minimal costs.</p>
+<p>Working in the cloud offered scalability and flexibility, especially for deploying and testing our models. However, we faced significant challenges with configuring services and troubleshooting issues, which made the experience frustrating at times. These struggles left us somewhat unconvinced about the cloud’s ease of use. It might be worth revisiting cloud deployment in a future project where the primary focus is on mastering cloud technologies and ensuring smoother workflows. This could help us better appreciate its potential.</p>
 <h3>Question 28</h3>
 <blockquote>
 <p><strong>Did you implement anything extra in your project that is not covered by other questions? Maybe you implemented</strong>
@@ -459,7 +496,9 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>implemented using ...</em></p>
 <p>Answer:</p>
 </blockquote>
-<p>--- question 28 fill here ---</p>
+<p>We implemented a <strong>Streamlit frontend</strong> for our API to enhance usability and provide a user-friendly interface for making predictions. The frontend allows users to upload a CSV file containing 10 features per row, which is then sent to the backend hosted on Google Cloud Run for predictions. This implementation helps non-technical users interact with our machine learning model without needing to access the backend directly.</p>
+<p>The frontend dynamically fetches the backend URL from Google Cloud Run, ensuring flexibility and seamless integration. Once a CSV file is uploaded and validated, the features are sent to the API endpoint, and the predictions are displayed in a table for easy visualization.</p>
+<p>We chose Streamlit for its simplicity and rapid prototyping capabilities, enabling us to build a functional and interactive interface in minimal time. This additional feature showcases the practical application of our project and improves accessibility for end-users.</p>
 <h3>Question 29</h3>
 <blockquote>
 <p><strong>Include a figure that describes the overall architecture of your system and what services that you make use of.</strong>
@@ -502,4 +541,6 @@ python train.py --lr 0.001 --batch_size 32 --epochs 50</code></p>
 <em>We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.</em>
 Answer:</p>
 </blockquote>
-<p>--- question 31 fill here ---</p>
+<p>s244501 was primarily responsible for setting up and managing the cloud infrastructure and API integration, leveraging his prior experience to streamline deployment and scaling. s232811 and s232812 focused on implementing the machine learning model, writing unit tests, and setting up logging frameworks like WandB to ensure experiment tracking and reproducibility.</p>
+<p>All members contributed actively to the project, collaborating on code development, debugging, and integrating various tools into the pipeline. Tasks were distributed to leverage individual strengths while maintaining group collaboration to address challenges collectively.</p>
+<p>Generative AI tools were used extensively, particularly for debugging and resolving integration issues. GitHub Copilot assisted in writing code and optimizing certain implementations. It was certainly useful to create commit messages.</p>

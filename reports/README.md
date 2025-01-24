@@ -600,7 +600,9 @@ For load testing, we utilized Locust,
 >
 > Answer:
 
---- question 26 fill here ---
+We did not implement monitoring for our electricity price prediction model, but it would be critical during volatile periods like the energy crisis years in 2022 and 2023 for example. Monitoring would help detect data drift, such as changes in market dynamics or energy consumption patterns, which could lead to inaccurate predictions. It would also track target drift, like shifts in electricity price distributions, signaling the need for retraining.
+
+By identifying these changes early, we could adapt the model to current conditions, ensuring it remains accurate and reliable. Monitoring would make the application robust and valuable for stakeholders relying on precise forecasts during unstable periods.
 
 ## Overall discussion of project
 
@@ -619,7 +621,9 @@ For load testing, we utilized Locust,
 >
 > Answer:
 
---- question 27 fill here ---
+During the project, we used various cloud services, with **Compute Engine** being the most expensive at $3.47. **Cloud Run** followed at $1.70, while services like **Artifact Registry** and **Cloud Storage** incurred minimal costs.
+
+Working in the cloud offered scalability and flexibility, especially for deploying and testing our models. However, we faced significant challenges with configuring services and troubleshooting issues, which made the experience frustrating at times. These struggles left us somewhat unconvinced about the cloud’s ease of use. It might be worth revisiting cloud deployment in a future project where the primary focus is on mastering cloud technologies and ensuring smoother workflows. This could help us better appreciate its potential.
 
 ### Question 28
 
