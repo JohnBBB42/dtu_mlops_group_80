@@ -1,9 +1,0 @@
-hyperparameters:
-  batch_size: 4
-  n_epochs: 2
-  lr: 0.001
-  seed: 42
-early_stopping:
-  patience: 5
-trainer:
-  limit_train_batches: 0.2

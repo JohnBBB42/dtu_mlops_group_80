@@ -380,18 +380,18 @@ The exact Python environment and dependencies were recorded in `requirements.txt
 
 In our experiments, we tracked critical metrics and hyperparameters using WandB. The first screenshot shows the **hyperparameter_tuning** for different hyperparameter sweeps, such as learning rate (`lr`), batch size, and epochs. Validation loss is crucial as it measures model performance on unseen data, guiding us in selecting the best hyperparameters. Notably, the plot reveals signs of overfitting in certain sweeps where validation loss increases sharply after an initial stable phase. This highlights the importance of early stopping and regularization in our training process to prevent overfitting.
 
-[validation_loss](figures/validation_loss.png)
+![validation_loss](figures/validation_loss.png)
 
 
 The second screenshot illustrates the **importance and correlation of hyperparameters** with validation loss. Batch size emerged as the most influential parameter, showing a strong negative correlation with loss, meaning smaller batch sizes likely resulted in better validation performance. Such insights help refine our experiments by focusing on impactful hyperparameters while deprioritizing less critical ones. This analysis was essential in efficiently navigating the parameter space.
 
 
-[hyperparameter_importance](figures/hyperparameter_importance.png)
+![hyperparameter_importance](figures/hyperparameter_importance.png)
 
 
 The third screenshot depicts a **parallel coordinate plot** of hyperparameter combinations and their corresponding validation loss. This visualization reveals how specific configurations (e.g., lower batch sizes paired with moderate learning rates) lead to improved performance, while certain combinations show suboptimal results. These observations enabled better decision-making during hyperparameter optimization by clearly visualizing the trade-offs and relationships between parameters.
 
-[hyperparameter_tuning](figures/hyperparameter_tuning.png)
+![hyperparameter_tuning](figures/hyperparameter_tuning.png)
 
 
 These metrics and visualizations were vital in understanding the effects of different configurations on model performance, ensuring we identified the best-performing setup. Tracking these allowed us to iteratively improve the model, address overfitting issues, and maintain experiment reproducibility with a clear audit trail of parameter choices and their outcomes.
@@ -468,7 +468,7 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 19 fill here ---
+![bucket](figures/bucket.jpg)
 
 ### Question 20
 
@@ -477,7 +477,7 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 20 fill here ---
+![registry](figures/registry.jpg)
 
 ### Question 21
 
@@ -486,7 +486,7 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 21 fill here ---
+![build](figures/build.png)
 
 ### Question 22
 
