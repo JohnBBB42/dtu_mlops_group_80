@@ -2,9 +2,11 @@ import json
 import random
 from locust import HttpUser, between, task
 
+
 def generate_features():
     """Generate a list of 10 random numerical features."""
     return [random.uniform(0, 100) for _ in range(10)]
+
 
 class BentoMLUser(HttpUser):
     """Locust user class for sending prediction requests to the BentoML server."""

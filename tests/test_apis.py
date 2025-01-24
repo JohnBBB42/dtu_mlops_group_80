@@ -5,6 +5,7 @@ from ml_deployment.bentoml_service import EnergyPricePredictorService
 service = EnergyPricePredictorService()
 client = TestClient(service.asgi_app)
 
+
 def test_read_root():
     """Test the root endpoint."""
     response = client.get("/")
@@ -13,6 +14,7 @@ def test_read_root():
     # For example:
     # assert response.json() == {"message": "Welcome to the Energy Price Predictor API!"}
     # If there's no root endpoint defined, you might skip or adjust this test.
+
 
 def test_predict():
     """Test the predict endpoint with valid input."""
@@ -25,6 +27,7 @@ def test_predict():
     assert "output" in response.json()
     assert isinstance(response.json()["output"], list)
     assert len(response.json()["output"]) > 0
+
 
 def test_predict_invalid_input():
     """Test the predict endpoint with invalid input."""
