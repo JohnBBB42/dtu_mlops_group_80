@@ -234,10 +234,11 @@ These tools enhance maintainability and readability, especially in larger projec
 >
 > Answer:
 
-We implemented 12 tests across key modules: 
+We implemented 14 tests across key modules: 
 
 1. **Model Testing**: Verifies output shapes, correctness of training, validation, and testing steps, including loss computation and backpropagation.
 2. **Data Testing**: Validates preprocessing (creation of `.pt` files), dataset loading, data integrity, and batch generation in the data module.
+3. **API Testing**: see Q25
 
 These tests ensure core components like preprocessing and model training function as expected, preventing errors from propagating and causing delays in larger projects.
 
