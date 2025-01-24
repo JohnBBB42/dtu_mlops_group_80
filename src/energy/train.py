@@ -96,11 +96,54 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             artifact.add_file(model_save_path)
             run.log_artifact(artifact)
 
+            # **Export the Model to ONNX**
+            export_onnx(model, input_size, models_dir
+        
         # Hydra setup: Avoid parsing `typer` arguments
         with hydra.initialize(config_path=cfg_path):
             cfg = hydra.compose(config_name=cfg_name)
             hydra_main(cfg)
 
+    def export_onnx(model: pl.LightningModule, input_size: int, export_dir: Path):
+        """
+        Export the trained PyTorch model to ONNX format.
+
+        Args:
+            model (pl.LightningModule): The trained PyTorch Lightning model.
+            input_size (int): The size of the input features.
+            export_dir (Path): Directory where the ONNX model will be saved.
+        """
+        # Ensure the model is in evaluation mode
+        model.eval()
+
+        # Move the model to CPU (ONNX export typically done on CPU)
+        model.to("cpu")
+
+        # Create a dummy input tensor with the appropriate size
+        dummy_input = torch.randn(1, input_size)
+
+        # Define the ONNX file path
+        onnx_model_path = export_dir / "model.onnx"
+
+        # Export the model
+        try:
+            torch.onnx.export(
+                model,                       # The model to export
+                dummy_input,                 # The dummy input
+                onnx_model_path,             # The file path to save the ONNX model
+                export_params=True,          # Store the trained parameter weights inside the model file
+                opset_version=11,            # The ONNX version to export the model to
+                do_constant_folding=True,    # Whether to execute constant folding for optimization
+                input_names=["input"],       # The model's input names
+                output_names=["output"],     # The model's output names
+                dynamic_axes={
+                    "input": {0: "batch_size"},   # Variable batch size
+                    "output": {0: "batch_size"}
+                },
+            )
+            log.info(f"Model successfully exported to {onnx_model_path}")
+        except Exception as e:
+            log.error(f"Failed to export the model to ONNX: {e}")
 
 if __name__ == "__main__":
     app()
