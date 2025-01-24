@@ -459,7 +459,10 @@ We performed a single profiling run using PyTorch’s built-in profiler to evalu
 >
 > Answer:
 
---- question 18 fill here ---
+We used Google Cloud Platform's Compute Engine to run our training workloads. We created instances in the europe-west1-c zone using the PyTorch CPU-optimized deep learning VM image (pytorch-latest-cpu) from the deeplearning-platform-release project. This pre-configured image provided us with a ready-to-use environment for machine learning tasks. After provisioning the instance named 'group-80', we accessed it via SSH using the gcloud compute ssh command. We then set up our development environment by creating a new virtual environment, pulling our code repository from Git, and retrieving our data using DVC (Data Version Control). This setup allowed us to efficiently manage both our code and data versions while training our models. 
+gcloud compute instances create group-80 --zone=europe-west1-c --image-fam
+ily=pytorch-latest-cpu --image-project=deeplearning-platform-release
+gcloud compute ssh group-80 --zone europe-west1-c
 
 ### Question 19
 
