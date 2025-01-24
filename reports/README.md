@@ -410,7 +410,20 @@ These metrics and visualizations were vital in understanding the effects of diff
 >
 > Answer:
 
---- question 15 fill here ---
+In this project we created one docker image for the training of our models. 
+We structured the Dockerfile with multi-stage builds to optimize the final image size.
+
+To run training experiments, we used:
+bash 
+docker run -v $(pwd)/data:/data training:latest \ 
+    --learning_rate=0.001 \ 
+    --batch_size=32 \ 
+    --epochs=50 
+
+
+The container mounts a local data volume and accepts hyperparameters as arguments. This setup ensures reproducible training runs across different environments. By using Docker, we eliminated the "it works on my machine" problem and ensured consistent behavior across development environments. The volume mounting strategy allows us to easily feed different datasets into the container while keeping the training code isolated and reproducible.
+
+The link to the dockerfile we used for the training can be found here in out git repository. <https://github.com/JohnBBB42/dtu_mlops_group_80/blob/main/dockerfiles/train.dockerfile>
 
 ### Question 16
 
