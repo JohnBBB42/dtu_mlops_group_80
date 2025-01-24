@@ -15,19 +15,6 @@ steps:
     'push',
     'europe-west1-docker.pkg.dev/united-concord-447713-c7/container-registry-group-80/$_IMAGE_NAME'
   ]
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'Deploy to Cloud Run'
-  args: [
-    'run',
-    'deploy',
-    'simple-fastapi-app',
-    '--image',
-    'europe-west1-docker.pkg.dev/united-concord-447713-c7/container-registry-group-80/$_IMAGE_NAME',
-    '--region',
-    'europe-west1',
-    '--platform',
-    'managed',
-  ]
 options:
   logging: CLOUD_LOGGING_ONLY
 substitutions:
