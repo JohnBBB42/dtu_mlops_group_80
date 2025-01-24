@@ -143,7 +143,7 @@ Group 80
 >
 > Answer:
 
---- question 3 fill here ---
+We used the third-party framework Bandit in our project. Bandit is a security linter designed to find common security issues in Python code. We utilized its code scanning functionality to automatically check our Python codebase for potential security vulnerabilities during our GitHub Actions workflow. Specifically, we implemented Bandit with the -r flag to recursively scan our source code directory. This automated security scanning helped ensure our code met basic security standards and identified potential risks before deployment. The integration with our CI/CD pipeline made security testing a seamless part of our development process. The integration was made in the codecheck.yaml workflow, which runs when the a new push on main is done or a new pull request is done. 
 
 ## Coding environment
 
