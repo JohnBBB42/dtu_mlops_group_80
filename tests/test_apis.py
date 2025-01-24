@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from ml_deployment.bentoml_service import EnergyPricePredictorService
+import random
 
 # Initialize the BentoML service and get the ASGI app
 service = EnergyPricePredictorService()

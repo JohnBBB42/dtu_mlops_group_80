@@ -677,4 +677,8 @@ By integrating these components into the Business Analytics curriculum, students
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
---- question 31 fill here ---
+Jonathan was primarily responsible for setting up and managing the cloud infrastructure and API integration, leveraging his prior experience to streamline deployment and scaling. Jonas and Jan focused on implementing the machine learning model, writing unit tests, and setting up logging frameworks like WandB to ensure experiment tracking and reproducibility. 
+
+All members contributed actively to the project, collaborating on code development, debugging, and integrating various tools into the pipeline. Tasks were distributed to leverage individual strengths while maintaining group collaboration to address challenges collectively.
+
+Generative AI tools were used extensively, particularly for debugging and resolving integration issues. GitHub Copilot assisted in writing code and optimizing certain implementations. These tools significantly enhanced productivity and reduced development time.
