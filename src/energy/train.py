@@ -97,7 +97,7 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
             run.log_artifact(artifact)
 
             # **Export the Model to ONNX**
-            export_onnx(model, input_size, models_dir
+            export_onnx(model, input_size, models_dir)
         
         # Hydra setup: Avoid parsing `typer` arguments
         with hydra.initialize(config_path=cfg_path):
